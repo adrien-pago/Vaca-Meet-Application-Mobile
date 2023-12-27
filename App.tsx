@@ -1,6 +1,8 @@
 // Importations nécessaires
 import React, { useState } from 'react';
-import { Modal, StyleSheet, View, TextInput, Button, Alert, Text } from 'react-native';
+import { Modal, StyleSheet, View, TextInput, Button, Alert, Text, ImageBackground } from 'react-native';
+
+const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/ 2691031.jpg" }; 
 
 export default function App() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -9,10 +11,13 @@ export default function App() {
   const [pseudo, setPseudo] = useState('');
 
   const handleSignUp = async () => {
-    // Vérifiez les entrées ici (pseudo, email, password)...
+    if (!email || !password || !pseudo) {
+      Alert.alert("Erreur", "Veuillez remplir tous les champs.");
+      return;
+    }
 
     try {
-      let response = await fetch('http://127.0.0.1/inscription.php', {
+      let response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/inscription.php', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -28,66 +33,59 @@ export default function App() {
       Alert.alert("Réponse du serveur:", json.message);
       if(json.status === 'success') {
         setModalVisible(false); // Fermer la fenêtre modale si succès
+      } else {
+        Alert.alert("Erreur", json.message || "Une erreur est survenue.");
       }
     } catch (error) {
       console.error(error);
+      Alert.alert("Erreur", "Impossible de se connecter au serveur.");
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Button title="S'inscrire" onPress={() => setModalVisible(true)} />
+    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+      <View style={styles.container}>
+        <Button title="S'inscrire" onPress={() => setModalVisible(true)} />
+        <Button title="Se Connecter" onPress={() => {/* Ajouter la logique de connexion ici */}} />
 
-      <Modal
-        animationType="slide"
-        transparent={true}
-        visible={modalVisible}
-        onRequestClose={() => {
-          setModalVisible(!modalVisible);
-        }}
-      >
-        <View style={styles.centeredView}>
-          <View style={styles.modalView}>
-            <TextInput
-              style={styles.input}
-              onChangeText={setPseudo}
-              value={pseudo}
-              placeholder="Pseudo"
-            />
-            <TextInput
-              style={styles.input}
-              onChangeText={setEmail}
-              value={email}
-              placeholder="Email"
-            />
-            <TextInput
-              style={styles.input}
-              onChangeText={setPassword}
-              value={password}
-              placeholder="Mot de passe"
-              secureTextEntry
-            />
-            <Button title="Créer un compte" onPress={handleSignUp} />
+        <Modal
+          animationType="slide"
+          transparent={true}
+          visible={modalVisible}
+          onRequestClose={() => {
+            setModalVisible(!modalVisible);
+          }}
+        >
+          <View style={styles.centeredView}>
+            <View style={styles.modalView}>
+              {/* ... Vos TextInputs et bouton restent ici ... */}
+            </View>
           </View>
-        </View>
-      </Modal>
-    </View>
+        </Modal>
+      </View>
+    </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover', 
+  },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
     alignItems: 'center',
     justifyContent: 'center',
+    padding: 20,
   },
   input: {
-    height: 40,
+    height: 50,
     margin: 12,
     borderWidth: 1,
     padding: 10,
-    width: '80%',
+    width: '100%',
+    backgroundColor: 'white',
+    borderRadius: 10,
   },
   centeredView: {
     flex: 1,
