@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "Application_vaca-meet",
-    "slug": "Application_vaca-meet",
+    "name": "Vaca-meet",
+    "slug": "Vaca-meet",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -21,8 +21,7 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
-      },
-      "package": "Application.v.myapp"
+      }
     },
     "web": {
       "favicon": "./assets/favicon.png"
