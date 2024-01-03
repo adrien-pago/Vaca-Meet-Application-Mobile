@@ -47,9 +47,9 @@ if ($result->num_rows > 0) {
 }
 
 // Insérer le nouvel utilisateur
-$stmt = $conn->prepare("INSERT INTO COMPTE_VACA_MEET (PSEUDO, MDP, EMAIL, TOKEN) VALUES (?, ?, ?, ?)");
+$stmt = $conn->prepare("INSERT INTO COMPTE_VACA_MEET (SPEUDO, MDP, EMAIL, TOKEN_COMPTE) VALUES (?, ?, ?, ?)");
 if ($stmt === false) {
-    echo json_encode(['status' => 'error', 'message' => "Erreur de préparation : " . $conn->error]);
+    echo json_encode(['status' => 'error', 'message' => "Erreur de préparation arf" . $conn->error]);
     exit();
 }
 
@@ -60,6 +60,7 @@ if ($stmt->execute()) {
 } else {
     echo json_encode(['status' => 'error', 'message' => "Erreur lors de l'inscription : " . $stmt->error]);
 }
+
 
 $stmt->close();
 $conn->close();

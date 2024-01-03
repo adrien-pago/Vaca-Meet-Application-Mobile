@@ -1,9 +1,9 @@
 // Importations nécessaires
 import React, { useState } from 'react';
-import { Modal, StyleSheet, View, TextInput, Button, Alert, Text, ImageBackground, TouchableOpacity } from 'react-native';
-import styles from './AppStyles';
+import { Modal, View, TextInput, TouchableOpacity, Alert, Text, ImageBackground,Button  } from 'react-native';
+import styles from './AppStyles'; // Assurez-vous que le chemin d'accès est correct
 
-const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/2691031.jpg" };
+const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca meet fond.png" };
 
 export default function App() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -39,15 +39,36 @@ export default function App() {
       }
     } catch (error) {
       console.error(error);
-      Alert.alert("Erreur", "Impossible de se connecter au serveur.");
+      if (error instanceof SyntaxError) {
+        Alert.alert("Erreur de parsing", "La réponse du serveur n'est pas en format JSON valide.");
+      } else {
+        Alert.alert("Erreur réseau", "Impossible de se connecter au serveur.");
+      }
     }
   };
 
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <View style={styles.container}>
-        <Button title="S'inscrire" onPress={() => setModalVisible(true)} />
-        <Button title="Se Connecter" onPress={() => {/* Logique de connexion */}} />
+        <Text style={styles.title}>Vaca Meet</Text>
+
+        <View style={styles.buttonContainer}>
+          <TouchableOpacity 
+            style={styles.button} 
+            onPress={() => setModalVisible(true)}
+          >
+            <Text style={styles.buttonText}>S'inscrire</Text>
+          </TouchableOpacity>
+
+          <View style={styles.buttonSpacer} />
+
+          <TouchableOpacity 
+            style={styles.button} 
+            onPress={() => {/* Logique de connexion */}}
+          >
+            <Text style={styles.buttonText}>Se Connecter</Text>
+          </TouchableOpacity>
+        </View>
 
         <Modal
           animationType="slide"
@@ -59,7 +80,6 @@ export default function App() {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              {/* Croix pour fermer la fenêtre modale */}
               <TouchableOpacity 
                 style={styles.closeButton} 
                 onPress={() => setModalVisible(false)}
@@ -94,4 +114,3 @@ export default function App() {
     </ImageBackground>
   );
 }
-
