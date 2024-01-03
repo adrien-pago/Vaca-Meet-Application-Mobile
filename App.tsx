@@ -1,8 +1,8 @@
 // Importations nécessaires
 import React, { useState } from 'react';
-import { Modal, StyleSheet, View, TextInput, Button, Alert, Text, ImageBackground } from 'react-native';
+import { Modal, StyleSheet, View, TextInput, Button, Alert, Text, ImageBackground, TouchableOpacity } from 'react-native';
 
-const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/ 2691031.jpg" }; 
+const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/2691031.jpg" };
 
 export default function App() {
   const [modalVisible, setModalVisible] = useState(false);
@@ -46,7 +46,7 @@ export default function App() {
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <View style={styles.container}>
         <Button title="S'inscrire" onPress={() => setModalVisible(true)} />
-        <Button title="Se Connecter" onPress={() => {/* Ajouter la logique de connexion ici */}} />
+        <Button title="Se Connecter" onPress={() => {/* Logique de connexion */}} />
 
         <Modal
           animationType="slide"
@@ -58,7 +58,34 @@ export default function App() {
         >
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              {/* ... Vos TextInputs et bouton restent ici ... */}
+              {/* Croix pour fermer la fenêtre modale */}
+              <TouchableOpacity 
+                style={styles.closeButton} 
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.textStyle}>X</Text>
+              </TouchableOpacity>
+
+              <TextInput
+                style={styles.input}
+                onChangeText={setEmail}
+                value={email}
+                placeholder="Email"
+              />
+              <TextInput
+                style={styles.input}
+                onChangeText={setPseudo}
+                value={pseudo}
+                placeholder="Pseudo"
+              />
+              <TextInput
+                style={styles.input}
+                onChangeText={setPassword}
+                value={password}
+                placeholder="Password"
+                secureTextEntry={true}
+              />
+              <Button title="S'inscrire" onPress={handleSignUp} />
             </View>
           </View>
         </Modal>
@@ -67,10 +94,11 @@ export default function App() {
   );
 }
 
+// Styles
 const styles = StyleSheet.create({
   backgroundImage: {
     flex: 1,
-    resizeMode: 'cover', 
+    resizeMode: 'cover',
   },
   container: {
     flex: 1,
@@ -91,7 +119,7 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
-    marginTop: 22
+    marginTop: 22,
   },
   modalView: {
     margin: 20,
@@ -106,6 +134,20 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
-    elevation: 5
+    elevation: 5,
   },
+  closeButton: {
+    position: 'absolute',
+    top: 10,
+    right: 10,
+    backgroundColor: 'red',
+    borderRadius: 15,
+    padding: 5,
+  },
+  textStyle: {
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center"
+  },
+  // Ajoutez ou modifiez d'autres styles si nécessaire
 });
