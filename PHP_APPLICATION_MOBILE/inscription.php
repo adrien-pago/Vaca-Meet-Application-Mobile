@@ -16,7 +16,7 @@ require_once 'config.php';
 // Se connecter à la base de données
 $conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
 if ($conn->connect_error) {
-    die("La connexion à la base de données a échoué : " . $conn->connect_error);
+    die("La connexion à la base de données a échoué " . $conn->connect_error);
 }
 
 // Récupérer les données envoyées par l'application
@@ -51,8 +51,7 @@ if ($result->num_rows > 0) {
 
 //Lien de confirmation
 $base_url = "http://vaca-meet.fr"; // votre domaine actuel.
-$confirmation_link = $base_url . '/PHP/APPLICATION_MOBILE/confirm_Token.php?token=' . $confirm_token;
-
+$confirmation_link = $base_url . '/PHP_APPLICATION_MOBILE/confirm_Token.php?token=' . $token;
 
 // Envoyer un e-mail de confirmation
 $mail = new PHPMailer(true);
@@ -67,7 +66,6 @@ try {
     $mail->SMTPSecure = 'tls';                           
     $mail->Port = 587;
 
-  
     // Configurer les paramètres de l'e-mail
     $mail->setFrom('adrien-pago@vaca-meet.fr', 'Support Technique');
     $mail->addAddress($email);
@@ -76,9 +74,9 @@ try {
     $mail->Subject = 'Confirmez votre compte';
     $mail->Body    = 'Bienvenue sur notre application Camping! Veuillez cliquer sur le lien suivant pour confirmer votre compte : <a href="' . $confirmation_link . '">Confirmer mon compte</a>';
 
-     // Envoyer l'e-mail
-     $mail->send();
- }  catch (Exception $e) {
+    // Envoyer l'e-mail
+    $mail->send();
+} catch (Exception $e) {
     $response_array['status'] = 'error';
     $response_array['message'] = "Le message n'a pas pu être envoyé. Erreur : {$mail->ErrorInfo}";
     echo json_encode($response_array);
@@ -87,7 +85,7 @@ try {
 }
 
 // Insérer le nouvel utilisateur
-$stmt = $conn->prepare("INSERT INTO COMPTE_VACA_MEET (SPEUDO, MDP, EMAIL, TOKEN_COMPTE) VALUES (?, ?, ?, ?)");
+$stmt = $conn->prepare("INSERT INTO COMPTE_VACA_MEET (NOM, MDP, EMAIL, TOKEN_COMPTE) VALUES (?, ?, ?, ?)");
 if ($stmt === false) {
     echo json_encode(['status' => 'error', 'message' => "Erreur de préparation arf" . $conn->error]);
     exit();
@@ -95,12 +93,10 @@ if ($stmt === false) {
 
 $stmt->bind_param("ssss", $pseudo, $hashed_password, $email, $token);
 if ($stmt->execute()) {
-    // TODO: Envoyer l'email de confirmation ici...
     echo json_encode(['status' => 'success', 'message' => "Inscription réussie. Vérifiez votre email pour confirmer."]);
 } else {
     echo json_encode(['status' => 'error', 'message' => "Erreur lors de l'inscription : " . $stmt->error]);
 }
-
 
 $stmt->close();
 $conn->close();
