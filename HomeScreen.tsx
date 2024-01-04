@@ -1,31 +1,49 @@
 ///////////////// HomeScreen.js ////////////////////////
 import React, { useState, useEffect } from 'react';
-import { View, Text, ImageBackground, TouchableOpacity, Picker, TextInput, StyleSheet, Image } from 'react-native';
-import HomeScreenStyle from './HomeScreenStyles'; // Assurez-vous que ce fichier existe et est correctement placé
+import { View, Text, ImageBackground, TouchableOpacity, TextInput, StyleSheet, Image, Alert } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
+import HomeScreenStyle from './HomeScreenStyles';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca meet fond.png" }; // Utilisation de votre fond d'écran
+const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca meet fond.png" };
 
-function HomeScreen({ route }) {
-  const { userId, userName } = route.params; // Récupérez les données passées depuis App.tsx
-  const [campings, setCampings] = useState([]); // État pour stocker les campings
-  const [selectedCamping, setSelectedCamping] = useState(''); // État pour le camping sélectionné
-  const [password, setPassword] = useState(''); // État pour le mot de passe
-  const [userPhoto, setUserPhoto] = useState(null); // État pour la photo de profil
+// Définissez vos types ici
+type RouteParams = {
+  userId: number;
+  userName: string;
+};
 
-  // Charger les données au montage du composant
+type Camping = {
+  id: number;
+  nom_camping: string;
+};
+
+function HomeScreen({ route }: { route: RouteParams }) {
+  const { userId, userName } = route;
+  const [campings, setCampings] = useState<Camping[]>([]); // Typage du tableau campings
+  const [selectedCamping, setSelectedCamping] = useState<string>(''); // État pour le camping sélectionné
+  const [password, setPassword] = useState<string>(''); // État pour le mot de passe
+  const [userPhoto, setUserPhoto] = useState<string | null>(null); // État pour la photo de profil
+
   useEffect(() => {
-    // TODO: Charger la liste des campings depuis la base de données
-    // TODO: Charger la photo de profil de l'utilisateur depuis la base de données en utilisant userId
+    loadCampings();
+    loadUserProfile(userId);
   }, []);
 
-  // TODO: Implémenter une fonction pour modifier la photo de profil
-  const handleProfilePicChange = () => {
-    // Logique pour permettre à l'utilisateur de sélectionner et de télécharger une nouvelle photo de profil
+  const loadCampings = async () => {
+    // TODO: Charger la liste des campings depuis la base de données
   };
 
-  // TODO: Implémenter une fonction pour la connexion au camping sélectionné
-  const handleConnectToCamping = () => {
-    // Logique pour gérer la connexion de l'utilisateur au camping sélectionné avec le mot de passe fourni
+  const loadUserProfile = async (userId: number) => {
+    // TODO: Charger la photo de profil de l'utilisateur depuis la base de données en utilisant userId
+  };
+
+  const handleProfilePicChange = async () => {
+    // TODO: Permettre à l'utilisateur de sélectionner et de télécharger une nouvelle photo de profil
+  };
+
+  const handleConnectToCamping = async () => {
+    // TODO: Gérer la connexion de l'utilisateur au camping sélectionné avec le mot de passe fourni
   };
 
   return (
