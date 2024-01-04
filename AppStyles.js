@@ -25,15 +25,18 @@ export default StyleSheet.create({
 
   buttonContainer: {
     flexDirection: 'row',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
     alignItems: 'center',
+    width: '80%', // La même largeur que les champs pour aligner les bords
   },
 
   button: {
     backgroundColor: '#90E',  // Viollet
-    padding: 10,
+    paddingVertical: 10,
+    paddingHorizontal: 10,
     borderRadius: 5,
     margin: 5,
+    flexGrow: 1, // Permet aux boutons de se développer et de remplir l'espace disponible
   },
   
   buttonText: {
@@ -46,7 +49,7 @@ export default StyleSheet.create({
   },
 
   input: {
-    height: 50,
+    height: 50, // Définissez la hauteur ici pour la rendre identique à celle des boutons
     margin: 12,
     borderWidth: 1,
     padding: 10,
@@ -76,7 +79,7 @@ export default StyleSheet.create({
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
-    width: '90%', // Ajustez la largeur de la vue modale pour s'adapter à la largeur de l'input
+    width: '90%',
   },
 
   closeButton: {
@@ -92,5 +95,21 @@ export default StyleSheet.create({
     color: "white",
     fontWeight: "bold",
     textAlign: "center",
+  },
+
+  loginBox: {
+    backgroundColor: 'rgba(255, 255, 255, 0.8)',
+    borderRadius: 10,
+    padding: 20,
+    alignItems: 'center',
+    width: '80%',
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 4,
+    },
+    shadowOpacity: 0.30,
+    shadowRadius: 4.65,
+    elevation: 8,
   },
 });

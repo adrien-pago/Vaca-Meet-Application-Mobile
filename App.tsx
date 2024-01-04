@@ -1,6 +1,6 @@
 // Importations nécessaires
 import React, { useState } from 'react';
-import { Modal, View, TextInput, TouchableOpacity, Alert, Text, ImageBackground,Button  } from 'react-native';
+import { Modal, View, TextInput, TouchableOpacity, Alert, Text, ImageBackground, Button } from 'react-native';
 import styles from './AppStyles'; // Assurez-vous que le chemin d'accès est correct
 
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca meet fond.png" };
@@ -10,6 +10,13 @@ export default function App() {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [pseudo, setPseudo] = useState('');
+  const [nom, setNom] = useState('');
+
+  // Ajoutez la logique de connexion ici
+  const handleLogin = () => {
+    // Implémentez la logique de connexion
+    Alert.alert("Info", "La logique de connexion sera ici.");
+  };
 
   const handleSignUp = async () => {
     if (!email || !password || !pseudo) {
@@ -50,24 +57,36 @@ export default function App() {
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <View style={styles.container}>
-        <Text style={styles.title}>Vaca Meet</Text>
+        <View style={styles.loginBox}>
+          <Text style={styles.title}>Vaca Meet</Text>
+          <TextInput
+            style={styles.input}
+            onChangeText={setNom}
+            value={nom}
+            placeholder="Nom"
+          />
+          <TextInput
+            style={styles.input}
+            onChangeText={setPassword}
+            value={password}
+            placeholder="Password"
+            secureTextEntry={true}
+          />
+          <View style={styles.buttonContainer}>
+            <TouchableOpacity 
+              style={styles.button} 
+              onPress={() => setModalVisible(true)}
+            >
+              <Text style={styles.buttonText}>S'inscrire</Text>
+            </TouchableOpacity>
 
-        <View style={styles.buttonContainer}>
-          <TouchableOpacity 
-            style={styles.button} 
-            onPress={() => setModalVisible(true)}
-          >
-            <Text style={styles.buttonText}>S'inscrire</Text>
-          </TouchableOpacity>
-
-          <View style={styles.buttonSpacer} />
-
-          <TouchableOpacity 
-            style={styles.button} 
-            onPress={() => {/* Logique de connexion */}}
-          >
-            <Text style={styles.buttonText}>Se Connecter</Text>
-          </TouchableOpacity>
+            <TouchableOpacity 
+              style={styles.button} 
+              onPress={handleLogin}
+            >
+              <Text style={styles.buttonText}>Se Connecter</Text>
+            </TouchableOpacity>
+          </View>
         </View>
 
         <Modal
