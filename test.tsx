@@ -1,12 +1,19 @@
 /////////////////// Importations nécessaires /////////////////////////////////////////////
 import React, { useState } from 'react';
 import { Modal, View, TextInput, TouchableOpacity, Alert, Text, ImageBackground } from 'react-native';
-import HomeScreen from './HomeScreen';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
+import HomeScreen from './HomeScreen'; // Assurez-vous que ce fichier existe et est correctement placé
 import styles from './AppStyles';
 
+const Stack = createNativeStackNavigator();
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca meet fond.png" };
 
-export default function App() {
+type LoginScreenProps = {
+  navigation: NativeStackNavigationProp<any>;
+};
+
+function LoginScreen({ navigation }: LoginScreenProps) {
   const [modalVisible, setModalVisible] = useState(false);
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
@@ -35,8 +42,7 @@ export default function App() {
       let json = await response.json();
       Alert.alert("Réponse du serveur:", json.message);
       if(json.status === 'success') {
-        navigation.navigate('Home'); // Naviguer vers HomeScreen après une connexion réussie
-        // TODO: Naviguer vers la nouvelle page après succès de la connexion
+        navigation.navigate('Home');  // Naviguer vers HomeScreen après une connexion réussie
       } else {
         Alert.alert("Erreur", json.message || "Une erreur est survenue lors de la connexion.");
       }
@@ -69,8 +75,7 @@ export default function App() {
       let json = await response.json();
       Alert.alert("Réponse du serveur:", json.message);
       if(json.status === 'success') {
-        setModalVisible(false);// fermer fenetre modal en cas de réussite d'inscription
-  
+        setModalVisible(false); // fermer fenetre modal en cas de réussite d'inscription
       } else {
         Alert.alert("Erreur lors de l'inscription", json.message || "Une erreur est survenue.");
       }
@@ -79,7 +84,6 @@ export default function App() {
       Alert.alert("Erreur réseau", "Impossible de se connecter au serveur.");
     }
   };
-
 
   //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   return (
@@ -153,7 +157,6 @@ export default function App() {
                 placeholder="Password"
                 secureTextEntry={true}
               />
-              {/* Remplacez le bouton par la logique d'inscription */}
               <TouchableOpacity style={styles.button} onPress={handleSignUp}>
                 <Text style={styles.buttonText}>S'inscrire</Text>
               </TouchableOpacity>
