@@ -1,6 +1,6 @@
 // Importations nécessaires
 import React, { useState } from 'react';
-import { Modal, View, TextInput, TouchableOpacity, Alert, Text, ImageBackground, Button } from 'react-native';
+import { Modal, View, TextInput, TouchableOpacity, Alert, Text, ImageBackground } from 'react-native';
 import styles from './AppStyles'; // Assurez-vous que le chemin d'accès est correct
 
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca meet fond.png" };
@@ -12,46 +12,39 @@ export default function App() {
   const [pseudo, setPseudo] = useState('');
   const [nom, setNom] = useState('');
 
-  // Ajoutez la logique de connexion ici
-  const handleLogin = () => {
-    // Implémentez la logique de connexion
-    Alert.alert("Info", "La logique de connexion sera ici.");
-  };
-
-  const handleSignUp = async () => {
-    if (!email || !password || !pseudo) {
-      Alert.alert("Erreur", "Veuillez remplir tous les champs.");
+  const handleLogin = async () => {
+    if (!nom || !password) {
+      Alert.alert("Erreur", "Veuillez remplir les champs Nom et Password.");
       return;
     }
 
     try {
-      let response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/inscription.php', {
+      let response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/login_vaca_meet.php', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          email: email,
+          nom: nom,
           password: password,
-          pseudo: pseudo,
         })
       });
       let json = await response.json();
       Alert.alert("Réponse du serveur:", json.message);
       if(json.status === 'success') {
-        setModalVisible(false); // Fermer la fenêtre modale si succès
+        // TODO: Naviguer vers la nouvelle page après succès de la connexion
       } else {
-        Alert.alert("Erreur", json.message || "Une erreur est survenue.");
+        Alert.alert("Erreur", json.message || "Une erreur est survenue lors de la connexion.");
       }
     } catch (error) {
       console.error(error);
-      if (error instanceof SyntaxError) {
-        Alert.alert("Erreur de parsing", "La réponse du serveur n'est pas en format JSON valide.");
-      } else {
-        Alert.alert("Erreur réseau", "Impossible de se connecter au serveur.");
-      }
+      Alert.alert("Erreur réseau", "Impossible de se connecter au serveur.");
     }
+  };
+
+  const handleSignUp = async () => {
+    // ... votre logique d'inscription existante ...
   };
 
   return (
@@ -125,7 +118,10 @@ export default function App() {
                 placeholder="Password"
                 secureTextEntry={true}
               />
-              <Button title="S'inscrire" onPress={handleSignUp} />
+              {/* Remplacez le bouton par votre logique d'inscription */}
+              <TouchableOpacity style={styles.button} onPress={handleSignUp}>
+                <Text style={styles.buttonText}>S'inscrire</Text>
+              </TouchableOpacity>
             </View>
           </View>
         </Modal>
