@@ -1,16 +1,22 @@
-/////////////////// Importations nécessaires /////////////////////////////////////////////
+////////////////////////// Imports Nécessaires ////////////////////////////////
 import React, { useState } from 'react';
 import { Modal, View, TextInput, TouchableOpacity, Alert, Text, ImageBackground } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
-import HomeScreen from './HomeScreen'; // Assurez-vous que ce fichier existe et est correctement placé
+import HomeScreen from './HomeScreen';
 import styles from './AppStyles';
 
-const Stack = createNativeStackNavigator();
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca meet fond.png" };
 
+type RootStackParamList = {
+  Login: undefined;
+  Home: { userId: number; userName: string };
+};
+
+const Stack = createNativeStackNavigator<RootStackParamList>();
+
 type LoginScreenProps = {
-  navigation: NativeStackNavigationProp<any>;
+  navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
 };
 
 function LoginScreen({ navigation }: LoginScreenProps) {
@@ -20,13 +26,12 @@ function LoginScreen({ navigation }: LoginScreenProps) {
   const [pseudo, setPseudo] = useState('');
   const [nom, setNom] = useState('');
 
-  //////////////////////// Fonction Connexion ////////////////////////////////////
+  ////////////////////////// Fonction de connexion ////////////////////////////////
   const handleLogin = async () => {
     if (!nom || !password) {
       Alert.alert("Erreur", "Veuillez remplir les champs Nom et Password.");
       return;
     }
-
     try {
       let response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/login_vaca_meet.php', {
         method: 'POST',
@@ -42,7 +47,7 @@ function LoginScreen({ navigation }: LoginScreenProps) {
       let json = await response.json();
       Alert.alert("Réponse du serveur:", json.message);
       if(json.status === 'success') {
-        navigation.navigate('Home');  // Naviguer vers HomeScreen après une connexion réussie
+        navigation.navigate('Home', { userId: 1, userName: nom }); //envoyer vers la page HomeScreen.tsx
       } else {
         Alert.alert("Erreur", json.message || "Une erreur est survenue lors de la connexion.");
       }
@@ -52,13 +57,12 @@ function LoginScreen({ navigation }: LoginScreenProps) {
     }
   };
 
-  ////////////// Fonction Inscription /////////////////
+  ////////////////////////// Fonction d'inscription ////////////////////////////////
   const handleSignUp = async () => {
     if (!email || !password || !pseudo) {
       Alert.alert("Erreur", "Veuillez remplir tous les champs pour l'inscription.");
       return;
     }
-
     try {
       let response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/inscription.php', {
         method: 'POST',
@@ -75,7 +79,7 @@ function LoginScreen({ navigation }: LoginScreenProps) {
       let json = await response.json();
       Alert.alert("Réponse du serveur:", json.message);
       if(json.status === 'success') {
-        setModalVisible(false); // fermer fenetre modal en cas de réussite d'inscription
+        setModalVisible(false);
       } else {
         Alert.alert("Erreur lors de l'inscription", json.message || "Une erreur est survenue.");
       }
@@ -85,78 +89,31 @@ function LoginScreen({ navigation }: LoginScreenProps) {
     }
   };
 
-  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <View style={styles.container}>
         <View style={styles.loginBox}>
           <Text style={styles.title}>Vaca Meet</Text>
-          <TextInput
-            style={styles.input}
-            onChangeText={setNom}
-            value={nom}
-            placeholder="Nom"
-          />
-          <TextInput
-            style={styles.input}
-            onChangeText={setPassword}
-            value={password}
-            placeholder="Password"
-            secureTextEntry={true}
-          />
+          <TextInput style={styles.input} onChangeText={setNom} value={nom} placeholder="Nom" />
+          <TextInput style={styles.input} onChangeText={setPassword} value={password} placeholder="Password" secureTextEntry={true} />
           <View style={styles.buttonContainer}>
-            <TouchableOpacity 
-              style={styles.button} 
-              onPress={() => setModalVisible(true)}
-            >
+            <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
               <Text style={styles.buttonText}>S'inscrire</Text>
             </TouchableOpacity>
-
-            <TouchableOpacity 
-              style={styles.button} 
-              onPress={handleLogin}
-            >
+            <TouchableOpacity style={styles.button} onPress={handleLogin}>
               <Text style={styles.buttonText}>Se Connecter</Text>
             </TouchableOpacity>
           </View>
         </View>
-
-        <Modal
-          animationType="slide"
-          transparent={true}
-          visible={modalVisible}
-          onRequestClose={() => {
-            setModalVisible(!modalVisible);
-          }}
-        >
+        <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => { setModalVisible(!modalVisible); }}>
           <View style={styles.centeredView}>
             <View style={styles.modalView}>
-              <TouchableOpacity 
-                style={styles.closeButton} 
-                onPress={() => setModalVisible(false)}
-              >
+              <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
                 <Text style={styles.textStyle}>X</Text>
               </TouchableOpacity>
-
-              <TextInput
-                style={styles.input}
-                onChangeText={setEmail}
-                value={email}
-                placeholder="Email"
-              />
-              <TextInput
-                style={styles.input}
-                onChangeText={setPseudo}
-                value={pseudo}
-                placeholder="Pseudo"
-              />
-              <TextInput
-                style={styles.input}
-                onChangeText={setPassword}
-                value={password}
-                placeholder="Password"
-                secureTextEntry={true}
-              />
+              <TextInput style={styles.input} onChangeText={setEmail} value={email} placeholder="Email" />
+              <TextInput style={styles.input} onChangeText={setPseudo} value={pseudo} placeholder="Pseudo" />
+              <TextInput style={styles.input} onChangeText={setPassword} value={password} placeholder="Password" secureTextEntry={true} />
               <TouchableOpacity style={styles.button} onPress={handleSignUp}>
                 <Text style={styles.buttonText}>S'inscrire</Text>
               </TouchableOpacity>
@@ -173,7 +130,7 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Home" component={HomeScreen} />
+        <Stack.Screen name="Home" component={HomeScreen} initialParams={{ userId: 0, userName: '' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );
