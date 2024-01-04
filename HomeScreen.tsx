@@ -6,18 +6,22 @@ import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca meet fond.png" };
 
-type RouteParams = {
-  userId: number;
-  userName: string;
-};
-
 type Camping = {
   id: number;
   nom_camping: string;
 };
 
-function HomeScreen({ route }: { route: RouteParams }) {
-  const { userId, userName } = route;
+type HomeScreenProps = {
+  route: {
+    params: {
+      userId: number;
+      userName: string;
+    };
+  };
+};
+
+function HomeScreen({ route }: HomeScreenProps) {
+  const { userId, userName } = route.params;
   const [campings, setCampings] = useState<Camping[]>([]);
   const [selectedCamping, setSelectedCamping] = useState<string>('');
   const [password, setPassword] = useState<string>('');
@@ -46,24 +50,36 @@ function HomeScreen({ route }: { route: RouteParams }) {
 
   return (
     <ImageBackground source={backgroundImage} style={HomeScreenStyle.backgroundImage}>
-      <View style={HomeScreenStyle.container}>
-        <TouchableOpacity style={HomeScreenStyle.profilePicContainer} onPress={handleProfilePicChange}>
-          <Image source={userPhoto ? { uri: userPhoto } : require('/path/to/default/profile/pic.png')} style={HomeScreenStyle.profilePic} />
-        </TouchableOpacity>
-        <Text>{userName}</Text>
-        <Text style={HomeScreenStyle.label}>Choisissez votre camping :</Text>
-        <Picker selectedValue={selectedCamping} style={HomeScreenStyle.picker} onValueChange={(itemValue) => setSelectedCamping(itemValue)}>
-          {campings.map(camping => (
-            <Picker.Item key={camping.id} label={camping.nom_camping} value={camping.nom_camping} />
-          ))}
-        </Picker>
-        <TextInput style={HomeScreenStyle.input} onChangeText={setPassword} value={password} placeholder="Password" secureTextEntry={true} />
-        <TouchableOpacity style={HomeScreenStyle.button} onPress={handleConnectToCamping}>
-          <Text style={HomeScreenStyle.buttonText}>Se connecter au camping</Text>
-        </TouchableOpacity>
-      </View>
+        <View style={HomeScreenStyle.container}>
+            {/* Photo de profil */}
+            <TouchableOpacity style={HomeScreenStyle.profilePicContainer} onPress={handleProfilePicChange}>
+                <Image source={userPhoto ? { uri: userPhoto } : require('./ASSET/profil.jpg')} style={HomeScreenStyle.profilePic} />
+            </TouchableOpacity>
+
+            {/* Assurez-vous que tout le texte est dans un composant <Text> */}
+            <Text style={HomeScreenStyle.userName}>{userName}</Text>
+
+            <View style={HomeScreenStyle.frameContainer}>
+                <Text style={HomeScreenStyle.label}>Choisissez votre camping :</Text>
+                <Picker
+                    selectedValue={selectedCamping}
+                    style={HomeScreenStyle.picker}
+                    onValueChange={(itemValue) => setSelectedCamping(itemValue)}
+                >
+                    {campings.map(camping => (
+                        <Picker.Item key={camping.id} label={camping.nom_camping} value={camping.nom_camping} />
+                    ))}
+                </Picker>
+
+                <TextInput style={HomeScreenStyle.input} onChangeText={setPassword} value={password} placeholder="Password" secureTextEntry={true} />
+
+                <TouchableOpacity style={HomeScreenStyle.button} onPress={handleConnectToCamping}>
+                    <Text style={HomeScreenStyle.buttonText}>Se connecter au camping</Text>
+                </TouchableOpacity>
+            </View>
+        </View>
     </ImageBackground>
-  );
+);
 }
 
 export default HomeScreen;
