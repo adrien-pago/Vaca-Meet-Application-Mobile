@@ -1,7 +1,7 @@
-// Importations nécessaires
+/////////////////// Importations nécessaires /////////////////////////////////////////////
 import React, { useState } from 'react';
 import { Modal, View, TextInput, TouchableOpacity, Alert, Text, ImageBackground } from 'react-native';
-import styles from './AppStyles'; // Assurez-vous que le chemin d'accès est correct
+import styles from './AppStyles';
 
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca meet fond.png" };
 
@@ -12,6 +12,7 @@ export default function App() {
   const [pseudo, setPseudo] = useState('');
   const [nom, setNom] = useState('');
 
+  //////////////////////// Fonction Connexion ////////////////////////////////////
   const handleLogin = async () => {
     if (!nom || !password) {
       Alert.alert("Erreur", "Veuillez remplir les champs Nom et Password.");
@@ -43,10 +44,42 @@ export default function App() {
     }
   };
 
+  ////////////// Fonction Inscription /////////////////
   const handleSignUp = async () => {
-    // ... votre logique d'inscription existante ...
+    if (!email || !password || !pseudo) {
+      Alert.alert("Erreur", "Veuillez remplir tous les champs pour l'inscription.");
+      return;
+    }
+
+    try {
+      let response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/inscription.php', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          email: email,
+          password: password,
+          pseudo: pseudo,
+        })
+      });
+      let json = await response.json();
+      Alert.alert("Réponse du serveur:", json.message);
+      if(json.status === 'success') {
+        setModalVisible(false);// fermer fenetre modal en cas de réussite d'inscription
+  
+      } else {
+        Alert.alert("Erreur lors de l'inscription", json.message || "Une erreur est survenue.");
+      }
+    } catch (error) {
+      console.error(error);
+      Alert.alert("Erreur réseau", "Impossible de se connecter au serveur.");
+    }
   };
 
+
+  //////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
   return (
     <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <View style={styles.container}>
@@ -118,7 +151,7 @@ export default function App() {
                 placeholder="Password"
                 secureTextEntry={true}
               />
-              {/* Remplacez le bouton par votre logique d'inscription */}
+              {/* Remplacez le bouton par la logique d'inscription */}
               <TouchableOpacity style={styles.button} onPress={handleSignUp}>
                 <Text style={styles.buttonText}>S'inscrire</Text>
               </TouchableOpacity>
