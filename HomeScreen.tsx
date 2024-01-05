@@ -32,22 +32,34 @@ function HomeScreen({ route }: HomeScreenProps) {
     loadUserProfile(userId);
   }, []);
 
+  ////////// Fonction charger les camping dans la combo /////////////////
   const loadCampings = async () => {
-    // Charger la liste des campings depuis la base de données
-  };
+    try {
+        const response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/NomCampingCombo.php');
+        const data = await response.json();
+        setCampings(data);
+    } catch (error) {
+        console.error(error);
+        Alert.alert("Erreur de chargement", "Impossible de charger les campings.");
+    }
+};
 
+  ////////// Fonction charger la photo de profil  /////////////////
   const loadUserProfile = async (userId: number) => {
     // Charger la photo de profil de l'utilisateur depuis la base de données en utilisant userId
   };
 
+  ////////// Fonction Modifier photo de profile /////////////////
   const handleProfilePicChange = async () => {
     // Permettre à l'utilisateur de sélectionner et de télécharger une nouvelle photo de profil
   };
 
+  ////////// Fonction Connexion au camping /////////////////
   const handleConnectToCamping = async () => {
     // Gérer la connexion de l'utilisateur au camping sélectionné avec le mot de passe fourni
   };
 
+  //////////////////////////////   Page ////////////////////////////////////////////////////
   return (
     <ImageBackground source={backgroundImage} style={HomeScreenStyle.backgroundImage}>
         <View style={HomeScreenStyle.container}>
