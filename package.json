@@ -12,10 +12,11 @@
     "@react-native-picker/picker": "2.6.1",
     "@react-navigation/native": "^6.1.9",
     "@react-navigation/native-stack": "^6.9.17",
-    "expo": "^49.0.21",
+    "expo": "^44.0.6",
     "expo-status-bar": "~1.2.0",
     "react": "18.2.0",
     "react-native": "0.72.6",
+    "react-native-picker-select": "^9.0.0",
     "react-native-safe-area-context": "3.3.2",
     "react-native-screens": "~3.10.1"
   },

@@ -9,14 +9,15 @@ if ($conn->connect_error) {
     die("La connexion à la base de données a échoué : " . $conn->connect_error);
 }
 
-// Récupérer les noms des campings
-$query = "SELECT id, NOM_CAMPING FROM CAMPING";
-$result = $conn->query($query);
+// Préparer la requête pour éviter les injections SQL
+$query = $conn->prepare("SELECT NOM_CAMPING FROM CAMPING");
+$query->execute();
+$result = $query->get_result();
 
 if ($result->num_rows > 0) {
     $campings = [];
     while($row = $result->fetch_assoc()) {
-        array_push($campings, array("id" => $row["id"], "nom_camping" => $row["NOM_CAMPING"]));
+        array_push($campings, $row["NOM_CAMPING"]);
     }
     echo json_encode($campings);
 } else {
