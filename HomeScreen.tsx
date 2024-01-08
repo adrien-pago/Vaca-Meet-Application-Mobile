@@ -34,6 +34,7 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
   }, []);
 
  
+  /////////////////////////// Fonction charger nom de cmaping Combo //////////////////////////////////////////
   const loadCampings = async () => {
     try {
       const response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/NomCampingCombo.php');
@@ -46,31 +47,36 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
     }
   };
 
+  ///////////////////////// Fonction charger photo de profil /////////////////////////////////////////////
   const loadUserProfile = async (userId: number) => {
     // Charger la photo de profil de l'utilisateur depuis la base de données en utilisant userId
   };
 
+  //////////////////////// Fonction Modifier photo de profil //////////////////////////////////
   const handleProfilePicChange = async () => {
     // Permettre à l'utilisateur de sélectionner et de télécharger une nouvelle photo de profil
   };
 
   const handleConnectToCamping = async () => {
+    console.log("Tentative de connexion avec : ", selectedCamping, password);
     try {
-      const response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/LoginCamping.php', {
+      let response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/LoginCamping.php', {
         method: 'POST',
         headers: {
+          Accept: 'application/json',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
           nomCamping: selectedCamping,
-          password: password
+          password: password,
         })
       });
-      const data = await response.json();
-      if (data.status === 'success') {
-        navigation.navigate('HomeCamping'); // Redirection vers la page HomeCamping.tsx
+      let json = await response.json();
+      console.log("Réponse du serveur:", json);
+      if(json.status === 'success') {
+        navigation.navigate('HomeCamping');
       } else {
-        Alert.alert("Erreur de connexion", data.message);
+        Alert.alert("Erreur de connexion", json.message || "Une erreur est survenue.");
       }
     } catch (error) {
       console.error(error);
@@ -86,16 +92,17 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
         </TouchableOpacity>
         <Text style={HomeScreenStyle.userName}>{userName}</Text>
         <View style={HomeScreenStyle.frameContainer}>
-          <Text style={HomeScreenStyle.label}>Nom du camping :</Text>
+          <Text style={HomeScreenStyle.label}>Nom du camping et son Password :</Text>
           <TextInput
             style={HomeScreenStyle.input}
-            onChangeText={text => setSelectedCamping(text)}
+            onChangeText={(text: string) => setSelectedCamping(text)}
+
             value={selectedCamping}
             placeholder="Entrez le nom du camping"
           />
           <TextInput
             style={HomeScreenStyle.input}
-            onChangeText={text => setPassword(text)}
+            onChangeText={(text: string) => setPassword(text)}
             value={password}
             placeholder="Password"
             secureTextEntry={true}

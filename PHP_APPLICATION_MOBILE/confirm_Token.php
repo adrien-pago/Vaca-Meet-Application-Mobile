@@ -1,8 +1,4 @@
 <?php
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
-
 // Se connecter à la base de données (Inclure les informations de connexion depuis le fichier de configuration)
 require_once 'config.php';
 

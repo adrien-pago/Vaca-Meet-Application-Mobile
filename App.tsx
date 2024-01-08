@@ -4,13 +4,16 @@ import { Modal, View, TextInput, TouchableOpacity, Alert, Text, ImageBackground 
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import HomeScreen from './HomeScreen';
+import HomeCamping from './HomeCamping';
 import styles from './AppStyles';
 
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca meet fond.png" };
 
+// gérer les routes de navigation //
 type RootStackParamList = {
   Login: undefined;
   Home: { userId: number; userName: string };
+  HomeCamping: undefined;  
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
@@ -125,12 +128,14 @@ function LoginScreen({ navigation }: LoginScreenProps) {
   );
 }
 
+///////////////////// pour naviger de page en page //////////////////////
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} initialParams={{ userId: 0, userName: '' }} />
+        <Stack.Screen name="HomeCamping" component={HomeCamping} /> 
       </Stack.Navigator>
     </NavigationContainer>
   );
