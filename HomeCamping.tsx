@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ImageBackground, TouchableOpacity, Image, ScrollView } from 'react-native';
 import styles from './HomeCampingStyles';
 
-const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca meet fond.png" };
+const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" };
 const defaultProfilePic = require('./ASSET/profil.jpg');
 
 // Définition de l'interface pour les événements du planning

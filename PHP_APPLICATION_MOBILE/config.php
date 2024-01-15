@@ -3,5 +3,5 @@
 $servername = "localhost";
 $dbname = "APPLICATION_CAMPING";
 $dbusername = "adrien_camping";
-$dbpassword = "nu9J556~z";
+$dbpassword = "c42xP_4u1";
 ?>
