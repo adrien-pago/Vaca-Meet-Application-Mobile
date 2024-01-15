@@ -36,4 +36,18 @@ export default StyleSheet.create({
     buttonText: {
         color: '#ffffff', 
     },
+
+    dateControls: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        padding: 10,
+    },
+    planningContainer: {
+        marginTop: 20,
+    },
+    eventItem: {
+        backgroundColor: '#fff',
+        padding: 10,
+        marginVertical: 5,
+    },
 });
