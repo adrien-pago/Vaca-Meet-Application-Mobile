@@ -5,7 +5,7 @@ import HomeScreenStyle from './HomeScreenStyles';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
-const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca meet fond.png" };
+const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" };
 
 type RootStackParamList = {
   Home: { userId: number; userName: string };

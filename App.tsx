@@ -7,7 +7,7 @@ import HomeScreen from './HomeScreen';
 import HomeCamping from './HomeCamping';
 import styles from './AppStyles';
 
-const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca meet fond.png" };
+const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" };
 
 // gérer les routes de navigation //
 type RootStackParamList = {
