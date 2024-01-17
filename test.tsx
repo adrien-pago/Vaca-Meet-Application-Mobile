@@ -1,137 +1,110 @@
-////////////////////////// Imports Nécessaires ////////////////////////////////
-import React, { useState } from 'react';
-import { Modal, View, TextInput, TouchableOpacity, Alert, Text, ImageBackground } from 'react-native';
-import { NavigationContainer } from '@react-navigation/native';
-import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
-import HomeScreen from './HomeScreen';
-import styles from './AppStyles';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ImageBackground, TouchableOpacity, Image, ScrollView } from 'react-native';
+import DatePicker from 'react-native-datepicker'; // Ajouté pour le sélecteur de date
+import WeeklyPlanning from './WeeklyPlanning'; // Assurez-vous de créer ce fichier
+import styles from './HomeCampingStyles';
 
-const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca meet fond.png" };
+const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" };
+const defaultProfilePic = require('./ASSET/profil.jpg');
 
-type RootStackParamList = {
-  Login: undefined;
-  Home: { userId: number; userName: string };
-};
+// Définition de l'interface pour les événements du planning
+interface PlanningEvent {
+    LIB_ACTIVITE: string;
+    // Ajoutez d'autres propriétés selon les données reçues de l'API
+}
 
-const Stack = createNativeStackNavigator<RootStackParamList>();
+function HomeCamping() {
+    const [userPhoto, setUserPhoto] = useState(defaultProfilePic);
+    const [planning, setPlanning] = useState<PlanningEvent[]>([]); // Utilisation de l'interface PlanningEvent
+    const [selectedDate, setSelectedDate] = useState(new Date()); // Date sélectionnée
+    const [showPlanning, setShowPlanning] = useState(false); // Ajouté pour le contrôle d'affichage du planning
 
-type LoginScreenProps = {
-  navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
-};
+    useEffect(() => {
+        // Charger les informations de l'utilisateur (logique à implémenter)
+    }, []);
 
-function LoginScreen({ navigation }: LoginScreenProps) {
-  const [modalVisible, setModalVisible] = useState(false);
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
-  const [pseudo, setPseudo] = useState('');
-  const [nom, setNom] = useState('');
+    useEffect(() => {
+        loadPlanning();
+    }, [selectedDate]);
 
-  ////////////////////////// Fonction de connexion ////////////////////////////////
-  const handleLogin = async () => {
-    if (!nom || !password) {
-      Alert.alert("Erreur", "Veuillez remplir les champs Nom et Password.");
-      return;
-    }
-    try {
-      let response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/login_vaca_meet.php', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          nom: nom,
-          password: password,
-        })
-      });
-      let json = await response.json();
-      Alert.alert("Réponse du serveur:", json.message);
-      if(json.status === 'success') {
-        navigation.navigate('Home', { userId: 1, userName: nom }); //envoyer vers la page HomeScreen.tsx
-      } else {
-        Alert.alert("Erreur", json.message || "Une erreur est survenue lors de la connexion.");
-      }
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Erreur réseau", "Impossible de se connecter au serveur.");
-    }
+    const getWeekStartAndEnd = (date: Date) => {
+      let startDate = new Date(date);
+      let endDate = new Date(date);
+
+      // Début de la semaine (lundi)
+      startDate.setDate(startDate.getDate() - startDate.getDay() + 1);
+      // Fin de la semaine (dimanche)
+      endDate.setDate(endDate.getDate() - endDate.getDay() + 7);
+
+      return { startDate, endDate };
   };
 
-  ////////////////////////// Fonction d'inscription ////////////////////////////////
-  const handleSignUp = async () => {
-    if (!email || !password || !pseudo) {
-      Alert.alert("Erreur", "Veuillez remplir tous les champs pour l'inscription.");
-      return;
-    }
-    try {
-      let response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/inscription.php', {
-        method: 'POST',
-        headers: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          email: email,
-          password: password,
-          pseudo: pseudo,
-        })
-      });
-      let json = await response.json();
-      Alert.alert("Réponse du serveur:", json.message);
-      if(json.status === 'success') {
-        setModalVisible(false);
-      } else {
-        Alert.alert("Erreur lors de l'inscription", json.message || "Une erreur est survenue.");
-      }
-    } catch (error) {
-      console.error(error);
-      Alert.alert("Erreur réseau", "Impossible de se connecter au serveur.");
-    }
-  };
+  const formatDate = (date: Date) => {
+    return date.toISOString().split('T')[0]; // Format YYYY-MM-DD
+};
 
-  return (
-    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
-      <View style={styles.container}>
-        <View style={styles.loginBox}>
-          <Text style={styles.title}>Vaca Meet</Text>
-          <TextInput style={styles.input} onChangeText={setNom} value={nom} placeholder="Nom" />
-          <TextInput style={styles.input} onChangeText={setPassword} value={password} placeholder="Password" secureTextEntry={true} />
-          <View style={styles.buttonContainer}>
-            <TouchableOpacity style={styles.button} onPress={() => setModalVisible(true)}>
-              <Text style={styles.buttonText}>S'inscrire</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={styles.button} onPress={handleLogin}>
-              <Text style={styles.buttonText}>Se Connecter</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-        <Modal animationType="slide" transparent={true} visible={modalVisible} onRequestClose={() => { setModalVisible(!modalVisible); }}>
-          <View style={styles.centeredView}>
-            <View style={styles.modalView}>
-              <TouchableOpacity style={styles.closeButton} onPress={() => setModalVisible(false)}>
-                <Text style={styles.textStyle}>X</Text>
-              </TouchableOpacity>
-              <TextInput style={styles.input} onChangeText={setEmail} value={email} placeholder="Email" />
-              <TextInput style={styles.input} onChangeText={setPseudo} value={pseudo} placeholder="Pseudo" />
-              <TextInput style={styles.input} onChangeText={setPassword} value={password} placeholder="Password" secureTextEntry={true} />
-              <TouchableOpacity style={styles.button} onPress={handleSignUp}>
-                <Text style={styles.buttonText}>S'inscrire</Text>
-              </TouchableOpacity>
+
+//////////// Alimenter le planning Camping ////////////////////////////
+const loadPlanning = async () => {
+    const { startDate, endDate } = getWeekStartAndEnd(selectedDate);
+    const startDateStr = formatDate(startDate);
+    const endDateStr = formatDate(endDate);
+    try {
+        const response = await fetch(`https://vaca-meet.fr/PHP_APPLICATION_MOBILE/LoadPlanningCamping.php?dateDebut=${startDateStr}&dateFin=${endDateStr}`);
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+        const jsonResponse = await response.json();
+        console.log("Réponse JSON reçue: ", jsonResponse);
+
+        if (jsonResponse.status === 'success') {
+            setPlanning(jsonResponse.data);
+            console.log("Planning mis à jour: ", jsonResponse.data);
+        } else {
+            console.error("Erreur dans la réponse du serveur: ", jsonResponse.message);
+        }
+    } catch (error) {
+        console.error("Erreur lors du chargement du planning: ", error);
+    }
+};
+
+    return (
+        <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+            <View style={styles.container}>
+                {/* Profil et boutons */}
+                <TouchableOpacity style={styles.profilePicContainer}>
+                    <Image source={userPhoto} style={styles.profilePic} />
+                </TouchableOpacity>
+                <Text style={styles.text}>Bienvenue dans votre camping!</Text>
+                <TouchableOpacity style={styles.button} onPress={() => setShowPlanning(!showPlanning)}>
+                    <Text style={styles.buttonText}>Voir planning Camping</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.button}>
+                    <Text style={styles.buttonText}>Voir activité vacancier</Text>
+                </TouchableOpacity>
+
+                {/* Contrôles de date et Planning */}
+                <View style={styles.dateControls}>
+                    <DatePicker
+                        style={styles.datePickerStyle}
+                        date={selectedDate}
+                        mode="date"
+                        placeholder="select date"
+                        format="YYYY-MM-DD"
+                        minDate="2020-01-01"
+                        maxDate="2025-12-31"
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        onDateChange={(date : string) => {
+                            setSelectedDate(new Date(date));
+                            setShowPlanning(false);
+                        }}
+                    />
+                </View>
+                {showPlanning && <WeeklyPlanning planning={planning} />}
             </View>
-          </View>
-        </Modal>
-      </View>
-    </ImageBackground>
-  );
+        </ImageBackground>
+    );
 }
 
-export default function App() {
-  return (
-    <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Home" component={HomeScreen} initialParams={{ userId: 0, userName: '' }} />
-      </Stack.Navigator>
-    </NavigationContainer>
-  );
-}
+export default HomeCamping;

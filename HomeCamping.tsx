@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ImageBackground, TouchableOpacity, Image, ScrollView } from 'react-native';
+import DatePicker from 'react-native-datepicker'; 
 import styles from './HomeCampingStyles';
+import { PlanningEvent } from './types';
+import WeeklyPlanning from './WeeklyPlanning';
 
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" };
 const defaultProfilePic = require('./ASSET/profil.jpg');
 
-// Définition de l'interface pour les événements du planning
-interface PlanningEvent {
-    LIB_ACTIVITE: string;
-    // Ajoutez d'autres propriétés selon les données reçues de l'API
-}
-
 function HomeCamping() {
     const [userPhoto, setUserPhoto] = useState(defaultProfilePic);
-    const [planning, setPlanning] = useState<PlanningEvent[]>([]); // Utilisation de l'interface PlanningEvent
-    const [selectedDate, setSelectedDate] = useState(new Date()); // Date sélectionnée
+    const [planning, setPlanning] = useState<{ [key: string]: PlanningEvent[] }>({}); // Changé pour utiliser un objet
+    const [selectedDate, setSelectedDate] = useState(new Date());
+    const [showPlanning, setShowPlanning] = useState(false);
 
     useEffect(() => {
         // Charger les informations de l'utilisateur (logique à implémenter)
@@ -28,19 +26,15 @@ function HomeCamping() {
         let startDate = new Date(date);
         let endDate = new Date(date);
 
-        // Début de la semaine (lundi)
         startDate.setDate(startDate.getDate() - startDate.getDay() + 1);
-        // Fin de la semaine (dimanche)
         endDate.setDate(endDate.getDate() - endDate.getDay() + 7);
 
         return { startDate, endDate };
     };
 
     const formatDate = (date: Date) => {
-        return date.toISOString().split('T')[0]; // Format YYYY-MM-DD
+        return date.toISOString().split('T')[0];
     };
-
-    
 
     const loadPlanning = async () => {
         const { startDate, endDate } = getWeekStartAndEnd(selectedDate);
@@ -51,12 +45,11 @@ function HomeCamping() {
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-            const jsonResponse = await response.json();
-            console.log("Réponse JSON reçue: ", jsonResponse);
-    
+            const jsonResponse: any = await response.json(); // Ajouté ': any'
+
             if (jsonResponse.status === 'success') {
-                setPlanning(jsonResponse.data);
-                console.log("Planning mis à jour: ", jsonResponse.data);
+                const structuredPlanning = structurePlanningByDay(jsonResponse.data);
+                setPlanning(structuredPlanning);
             } else {
                 console.error("Erreur dans la réponse du serveur: ", jsonResponse.message);
             }
@@ -64,35 +57,51 @@ function HomeCamping() {
             console.error("Erreur lors du chargement du planning: ", error);
         }
     };
-    
+
+    const structurePlanningByDay = (data: any[]) => { // Ajouté ': any[]'
+        const weekDays = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
+        let structuredData = { Lundi: [], Mardi: [], Mercredi: [], Jeudi: [], Vendredi: [], Samedi: [], Dimanche: [] };
+
+        data.forEach((item: any) => { // Ajouté ': any'
+            const dayOfWeek = new Date(item.DATE_HEURE_DEBUT).getDay();
+            const dayName = weekDays[dayOfWeek - 1];
+            structuredData[dayName as keyof typeof structuredData].push(item);
+        });
+
+        return structuredData;
+    };
 
     return (
         <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
             <View style={styles.container}>
-                {/* Profil et boutons */}
                 <TouchableOpacity style={styles.profilePicContainer}>
                     <Image source={userPhoto} style={styles.profilePic} />
                 </TouchableOpacity>
                 <Text style={styles.text}>Bienvenue dans votre camping!</Text>
-                <TouchableOpacity style={styles.button}>
+                <TouchableOpacity style={styles.button} onPress={() => setShowPlanning(!showPlanning)}>
                     <Text style={styles.buttonText}>Voir planning Camping</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Voir activité vacancier</Text>
                 </TouchableOpacity>
-
-                {/* Contrôles de date et Planning */}
                 <View style={styles.dateControls}>
-                    {/* Ajouter des boutons pour changer la date */}
+                    <DatePicker
+                        style={styles.datePickerStyle}
+                        date={selectedDate}
+                        mode="date"
+                        placeholder="select date"
+                        format="YYYY-MM-DD"
+                        minDate="2020-01-01"
+                        maxDate="2025-12-31"
+                        confirmBtnText="Confirm"
+                        cancelBtnText="Cancel"
+                        onDateChange={(date: string) => {
+                            setSelectedDate(new Date(date));
+                            setShowPlanning(false);
+                        }}
+                    />
                 </View>
-                <ScrollView style={styles.planningContainer}>
-                    {planning.map((event, index) => (
-                        <View key={index} style={styles.eventItem}>
-                            <Text>{event.LIB_ACTIVITE}</Text>
-                            {/* Afficher les détails de l'événement */}
-                        </View>
-                    ))}
-                </ScrollView>
+                {showPlanning && <WeeklyPlanning planning={planning} />}
             </View>
         </ImageBackground>
     );

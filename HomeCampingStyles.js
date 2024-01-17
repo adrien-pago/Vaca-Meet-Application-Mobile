@@ -36,11 +36,14 @@ export default StyleSheet.create({
     buttonText: {
         color: '#ffffff', 
     },
-
     dateControls: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         padding: 10,
+    },
+    datePickerStyle: { // Style ajouté pour le sélecteur de date
+        width: 200,
+        marginTop: 20,
     },
     planningContainer: {
         marginTop: 20,
