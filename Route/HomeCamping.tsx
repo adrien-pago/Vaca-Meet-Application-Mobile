@@ -1,18 +1,22 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ImageBackground, TouchableOpacity, Image, ScrollView } from 'react-native';
-import DatePicker from 'react-native-datepicker'; 
-import styles from './HomeCampingStyles';
-import { PlanningEvent } from './types';
-import WeeklyPlanning from './WeeklyPlanning';
+import { View, Text, ImageBackground, TouchableOpacity, Image } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker'; 
+import { RouteProp, useNavigation } from '@react-navigation/native';
+import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { RootStackParamList } from '../App'; 
+import styles from '../Styles/HomeCampingStyles';
+import { PlanningEvent } from './types'; 
+import WeeklyPlanning from './WeeklyPlanning'; 
+
 
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" };
 const defaultProfilePic = require('./ASSET/profil.jpg');
 
 function HomeCamping() {
     const [userPhoto, setUserPhoto] = useState(defaultProfilePic);
-    const [planning, setPlanning] = useState<{ [key: string]: PlanningEvent[] }>({}); // Changé pour utiliser un objet
+    const [planning, setPlanning] = useState<{ [key: string]: PlanningEvent[] }>({}); 
     const [selectedDate, setSelectedDate] = useState(new Date());
-    const [showPlanning, setShowPlanning] = useState(false);
+    const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
     useEffect(() => {
         // Charger les informations de l'utilisateur (logique à implémenter)
@@ -58,16 +62,21 @@ function HomeCamping() {
         }
     };
 
-    const structurePlanningByDay = (data: any[]) => { // Ajouté ': any[]'
+    const structurePlanningByDay = (data: PlanningEvent[]) => {
         const weekDays = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
-        let structuredData = { Lundi: [], Mardi: [], Mercredi: [], Jeudi: [], Vendredi: [], Samedi: [], Dimanche: [] };
-
-        data.forEach((item: any) => { // Ajouté ': any'
+        let structuredData: { [key: string]: PlanningEvent[] } = {
+            Lundi: [], Mardi: [], Mercredi: [], Jeudi: [], Vendredi: [], Samedi: [], Dimanche: []
+        };
+    
+        data.forEach((item: PlanningEvent) => {
             const dayOfWeek = new Date(item.DATE_HEURE_DEBUT).getDay();
-            const dayName = weekDays[dayOfWeek - 1];
-            structuredData[dayName as keyof typeof structuredData].push(item);
+            const dayName = weekDays[(dayOfWeek + 6) % 7]; // Ajustement pour que Dimanche soit 0
+    
+            if (dayName in structuredData) {
+                structuredData[dayName as keyof typeof structuredData].push(item);
+            }
         });
-
+    
         return structuredData;
     };
 
@@ -78,30 +87,26 @@ function HomeCamping() {
                     <Image source={userPhoto} style={styles.profilePic} />
                 </TouchableOpacity>
                 <Text style={styles.text}>Bienvenue dans votre camping!</Text>
-                <TouchableOpacity style={styles.button} onPress={() => setShowPlanning(!showPlanning)}>
+                <TouchableOpacity 
+                    style={styles.button} 
+                    onPress={() => navigation.navigate('ViewPlanningCamping', { planning: planning })}
+                >
                     <Text style={styles.buttonText}>Voir planning Camping</Text>
                 </TouchableOpacity>
                 <TouchableOpacity style={styles.button}>
                     <Text style={styles.buttonText}>Voir activité vacancier</Text>
                 </TouchableOpacity>
                 <View style={styles.dateControls}>
-                    <DatePicker
+                    <DateTimePicker
                         style={styles.datePickerStyle}
-                        date={selectedDate}
+                        value={selectedDate}
                         mode="date"
-                        placeholder="select date"
-                        format="YYYY-MM-DD"
-                        minDate="2020-01-01"
-                        maxDate="2025-12-31"
-                        confirmBtnText="Confirm"
-                        cancelBtnText="Cancel"
-                        onDateChange={(date: string) => {
-                            setSelectedDate(new Date(date));
-                            setShowPlanning(false);
-                        }}
+                        minimumDate={new Date(2020, 0, 1)}
+                        maximumDate={new Date(2025, 11, 31)}
+                        onChange={(event: any, date: any) => date && setSelectedDate(date)}
                     />
                 </View>
-                {showPlanning && <WeeklyPlanning planning={planning} />}
+                {planning && <WeeklyPlanning planning={planning} />}
             </View>
         </ImageBackground>
     );

@@ -3,20 +3,24 @@ import React, { useState } from 'react';
 import { Modal, View, TextInput, TouchableOpacity, Alert, Text, ImageBackground } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
-import HomeScreen from './HomeScreen';
-import HomeCamping from './HomeCamping';
-import styles from './AppStyles';
+import HomeScreen from './Route/HomeScreen';
+import HomeCamping from './Route/HomeCamping';
+import ViewPlanningCamping from './Route/ViewPlanningCamping';
+import styles from './Styles/AppStyles';
+import { PlanningEvent } from './Route/types'; 
 
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" };
 
 // gérer les routes de navigation //
-type RootStackParamList = {
+export type RootStackParamList = {
   Login: undefined;
   Home: { userId: number; userName: string };
   HomeCamping: undefined;  
+  ViewPlanningCamping: { planning: { [key: string]: PlanningEvent[] } };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
 
 type LoginScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
@@ -136,6 +140,7 @@ export default function App() {
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} initialParams={{ userId: 0, userName: '' }} />
         <Stack.Screen name="HomeCamping" component={HomeCamping} /> 
+        <Stack.Screen name="ViewPlanningCamping" component={ViewPlanningCamping} />
       </Stack.Navigator>
     </NavigationContainer>
   );

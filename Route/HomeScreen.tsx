@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ImageBackground, TouchableOpacity, TextInput, Image, Alert } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select'; // pour une combo
-import HomeScreenStyle from './HomeScreenStyles';
+import HomeScreenStyle from '../Styles/HomeScreenStyles';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
