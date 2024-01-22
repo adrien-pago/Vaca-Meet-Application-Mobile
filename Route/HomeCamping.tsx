@@ -16,8 +16,9 @@ const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" }
 const defaultProfilePic = require('../ASSET/profil.jpg');
 
 function HomeCamping({ route }: HomeCampingProps) {
+  console.log(route.params);
   const [userPhoto, setUserPhoto] = useState(defaultProfilePic);
-  const { planning } = route.params; // Récupérer le planning à partir des paramètres de la route
+  const planning = route.params?.planning; // Récupérer le planning à partir des paramètres de la route
   const [selectedDate, setSelectedDate] = useState(new Date());
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 

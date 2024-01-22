@@ -13,6 +13,7 @@ type ViewPlanningCampingProps = {
 function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
     const { planning } = route.params;
 
+
     if (!planning) {
         return <Text>Aucun planning disponible.</Text>;
     }

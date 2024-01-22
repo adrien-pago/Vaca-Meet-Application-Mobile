@@ -5,13 +5,12 @@ import { RootStackParamList } from '../App';
 import { PlanningEvent } from './types';
 import styles from '../Styles/WeeklyPlanningStyles';
 
-type ViewPlanningCampingProps = {
-    route: RouteProp<RootStackParamList, 'ViewPlanningCamping'>;
-    planning?: { [key: string]: PlanningEvent[] };
+
+type WeeklyPlanningProps = {
+    planning: { [key: string]: PlanningEvent[] };
 };
 
-const WeeklyPlanning: React.FC<ViewPlanningCampingProps> = ({ route }) => {
-    const { planning } = route.params;
+const WeeklyPlanning: React.FC<WeeklyPlanningProps> = ({ planning }) => {
     const weekDays = ['Lundi', 'Mardi', 'Mercredi', 'Jeudi', 'Vendredi', 'Samedi', 'Dimanche'];
 
     return (
