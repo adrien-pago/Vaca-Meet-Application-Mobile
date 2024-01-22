@@ -7,7 +7,7 @@ import HomeScreen from './Route/HomeScreen';
 import HomeCamping from './Route/HomeCamping';
 import ViewPlanningCamping from './Route/ViewPlanningCamping';
 import styles from './Styles/AppStyles';
-import { PlanningEvent } from './Route/types'; 
+import { PlanningEvent } from './Route/types';
 
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" };
 
@@ -15,12 +15,11 @@ const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" }
 export type RootStackParamList = {
   Login: undefined;
   Home: { userId: number; userName: string };
-  HomeCamping: undefined;  
+  HomeCamping: { planning: { [key: string]: PlanningEvent[] } }; // Ajoutez le type de props nécessaire ici
   ViewPlanningCamping: { planning: { [key: string]: PlanningEvent[] } };
 };
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
-
 
 type LoginScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
@@ -53,7 +52,7 @@ function LoginScreen({ navigation }: LoginScreenProps) {
       });
       let json = await response.json();
       Alert.alert("Réponse du serveur:", json.message);
-      if(json.status === 'success') {
+      if (json.status === 'success') {
         navigation.navigate('Home', { userId: 1, userName: nom }); //envoyer vers la page HomeScreen.tsx
       } else {
         Alert.alert("Erreur", json.message || "Une erreur est survenue lors de la connexion.");
@@ -85,7 +84,7 @@ function LoginScreen({ navigation }: LoginScreenProps) {
       });
       let json = await response.json();
       Alert.alert("Réponse du serveur:", json.message);
-      if(json.status === 'success') {
+      if (json.status === 'success') {
         setModalVisible(false);
       } else {
         Alert.alert("Erreur lors de l'inscription", json.message || "Une erreur est survenue.");
@@ -132,14 +131,14 @@ function LoginScreen({ navigation }: LoginScreenProps) {
   );
 }
 
-///////////////////// pour naviger de page en page //////////////////////
+///////////////////// pour naviguer de page en page //////////////////////
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} initialParams={{ userId: 0, userName: '' }} />
-        <Stack.Screen name="HomeCamping" component={HomeCamping} /> 
+        <Stack.Screen name="HomeCamping" component={HomeCamping} />
         <Stack.Screen name="ViewPlanningCamping" component={ViewPlanningCamping} />
       </Stack.Navigator>
     </NavigationContainer>

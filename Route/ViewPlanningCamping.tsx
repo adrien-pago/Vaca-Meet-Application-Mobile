@@ -13,6 +13,10 @@ type ViewPlanningCampingProps = {
 function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
     const { planning } = route.params;
 
+    if (!planning) {
+        return <Text>Aucun planning disponible.</Text>;
+    }
+
     return (
         <ScrollView style={styles.container}>
             <Text style={styles.header}>Planning de Camping</Text>

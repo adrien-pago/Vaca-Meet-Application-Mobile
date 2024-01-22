@@ -7,6 +7,7 @@ import styles from '../Styles/WeeklyPlanningStyles';
 
 type ViewPlanningCampingProps = {
     route: RouteProp<RootStackParamList, 'ViewPlanningCamping'>;
+    planning?: { [key: string]: PlanningEvent[] };
 };
 
 const WeeklyPlanning: React.FC<ViewPlanningCampingProps> = ({ route }) => {
