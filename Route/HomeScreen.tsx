@@ -2,14 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ImageBackground, TouchableOpacity, TextInput, Image, Alert } from 'react-native';
 import RNPickerSelect from 'react-native-picker-select'; // pour une combo date
 import HomeScreenStyle from '../Styles/HomeScreenStyles';
+import { PlanningEvent } from './types'
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" };
 
+const votrePlanning = {};//valeur du planning par défault
+
 type RootStackParamList = {
   Home: { userId: number; userName: string };
-  HomeCamping: undefined;
+  HomeCamping: { planning: { [key: string]: PlanningEvent[] } };
 };
 
 type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>;
@@ -74,7 +77,7 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
       let json = await response.json();
       console.log("Réponse du serveur:", json);
       if(json.status === 'success') {
-        navigation.navigate('HomeCamping', { planning });
+        navigation.navigate('HomeCamping', { planning: votrePlanning });
       } else {
         Alert.alert("Erreur de connexion", json.message || "Une erreur est survenue.");
       }

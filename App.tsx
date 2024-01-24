@@ -19,6 +19,10 @@ export type RootStackParamList = {
   ViewPlanningCamping: { planning: { [key: string]: PlanningEvent[] } };
 };
 
+//valeur du planning par défault
+const defaultValue = {}; // Assurez-vous que cela correspond à la structure attendue
+
+
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
 type LoginScreenProps = {
@@ -138,7 +142,7 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} initialParams={{ userId: 0, userName: '' }} />
-        <Stack.Screen name="HomeCamping" component={HomeCamping} />
+        <Stack.Screen name="HomeCamping" component={HomeCamping} initialParams={{ planning: defaultValue }} />
         <Stack.Screen name="ViewPlanningCamping" component={ViewPlanningCamping} />
       </Stack.Navigator>
     </NavigationContainer>
