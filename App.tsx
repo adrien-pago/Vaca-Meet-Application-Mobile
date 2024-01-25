@@ -19,11 +19,9 @@ export type RootStackParamList = {
   ViewPlanningCamping: { planning: { [key: string]: PlanningEvent[] } };
 };
 
-//valeur du planning par défault
-const defaultValue = {}; // Assurez-vous que cela correspond à la structure attendue
+const defaultValue = {};  //valeur du planning par défault
 
-
-const Stack = createNativeStackNavigator<RootStackParamList>();
+const Stack = createNativeStackNavigator<RootStackParamList>(); //création de stack car on utilise plusieur route
 
 type LoginScreenProps = {
   navigation: NativeStackNavigationProp<RootStackParamList, 'Login'>;
@@ -142,7 +140,7 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} initialParams={{ userId: 0, userName: '' }} />
-        <Stack.Screen name="HomeCamping" component={HomeCamping} initialParams={{ planning: defaultValue }} />
+        <Stack.Screen name="HomeCamping" component={HomeCamping} initialParams={{ planning: defaultValue }} /> 
         <Stack.Screen name="ViewPlanningCamping" component={ViewPlanningCamping} />
       </Stack.Navigator>
     </NavigationContainer>
