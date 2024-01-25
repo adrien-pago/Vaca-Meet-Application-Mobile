@@ -3,18 +3,25 @@ import React, { useState } from 'react';
 import { Modal, View, TextInput, TouchableOpacity, Alert, Text, ImageBackground } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
-import HomeScreen from './HomeScreen';
-import HomeCamping from './HomeCamping';
-import styles from './AppStyles';
+import HomeScreen from './Route/HomeScreen';
+import HomeCamping from './Route/HomeCamping';
+import ViewPlanningCamping from './Route/ViewPlanningCamping';
+import styles from './Styles/AppStyles';
+import { PlanningEvent } from './Route/types';
 
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" };
 
 // gérer les routes de navigation //
-type RootStackParamList = {
+export type RootStackParamList = {
   Login: undefined;
   Home: { userId: number; userName: string };
-  HomeCamping: undefined;  
+  HomeCamping: { planning: { [key: string]: PlanningEvent[] } }; // Ajoutez le type de props nécessaire ici
+  ViewPlanningCamping: { planning: { [key: string]: PlanningEvent[] } };
 };
+
+//valeur du planning par défault
+const defaultValue = {}; // Assurez-vous que cela correspond à la structure attendue
+
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
 
@@ -49,7 +56,7 @@ function LoginScreen({ navigation }: LoginScreenProps) {
       });
       let json = await response.json();
       Alert.alert("Réponse du serveur:", json.message);
-      if(json.status === 'success') {
+      if (json.status === 'success') {
         navigation.navigate('Home', { userId: 1, userName: nom }); //envoyer vers la page HomeScreen.tsx
       } else {
         Alert.alert("Erreur", json.message || "Une erreur est survenue lors de la connexion.");
@@ -81,7 +88,7 @@ function LoginScreen({ navigation }: LoginScreenProps) {
       });
       let json = await response.json();
       Alert.alert("Réponse du serveur:", json.message);
-      if(json.status === 'success') {
+      if (json.status === 'success') {
         setModalVisible(false);
       } else {
         Alert.alert("Erreur lors de l'inscription", json.message || "Une erreur est survenue.");
@@ -128,14 +135,15 @@ function LoginScreen({ navigation }: LoginScreenProps) {
   );
 }
 
-///////////////////// pour naviger de page en page //////////////////////
+///////////////////// pour naviguer de page en page //////////////////////
 export default function App() {
   return (
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} initialParams={{ userId: 0, userName: '' }} />
-        <Stack.Screen name="HomeCamping" component={HomeCamping} /> 
+        <Stack.Screen name="HomeCamping" component={HomeCamping} initialParams={{ planning: defaultValue }} />
+        <Stack.Screen name="ViewPlanningCamping" component={ViewPlanningCamping} />
       </Stack.Navigator>
     </NavigationContainer>
   );

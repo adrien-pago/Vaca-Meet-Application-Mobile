@@ -1,15 +1,18 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ImageBackground, TouchableOpacity, TextInput, Image, Alert } from 'react-native';
-import RNPickerSelect from 'react-native-picker-select'; // pour une combo
-import HomeScreenStyle from './HomeScreenStyles';
+import RNPickerSelect from 'react-native-picker-select'; // pour une combo date
+import HomeScreenStyle from '../Styles/HomeScreenStyles';
+import { PlanningEvent } from './types'
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" };
 
+const votrePlanning = {};//valeur du planning par défault
+
 type RootStackParamList = {
   Home: { userId: number; userName: string };
-  HomeCamping: undefined;
+  HomeCamping: { planning: { [key: string]: PlanningEvent[] } };
 };
 
 type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>;
@@ -34,7 +37,7 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
   }, []);
 
  
-  /////////////////////////// Fonction charger nom de cmaping Combo //////////////////////////////////////////
+  /////////////////////////// Fonction charger nom de camping Combo //////////////////////////////////////////
   const loadCampings = async () => {
     try {
       const response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/NomCampingCombo.php');
@@ -74,7 +77,7 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
       let json = await response.json();
       console.log("Réponse du serveur:", json);
       if(json.status === 'success') {
-        navigation.navigate('HomeCamping');
+        navigation.navigate('HomeCamping', { planning: votrePlanning });
       } else {
         Alert.alert("Erreur de connexion", json.message || "Une erreur est survenue.");
       }
@@ -88,7 +91,7 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
     <ImageBackground source={backgroundImage} style={HomeScreenStyle.backgroundImage}>
       <View style={HomeScreenStyle.container}>
         <TouchableOpacity style={HomeScreenStyle.profilePicContainer} onPress={handleProfilePicChange}>
-          <Image source={userPhoto ? { uri: userPhoto } : require('./ASSET/profil.jpg')} style={HomeScreenStyle.profilePic} />
+          <Image source={userPhoto ? { uri: userPhoto } : require('../ASSET/profil.jpg')} style={HomeScreenStyle.profilePic} />
         </TouchableOpacity>
         <Text style={HomeScreenStyle.userName}>{userName}</Text>
         <View style={HomeScreenStyle.frameContainer}>
