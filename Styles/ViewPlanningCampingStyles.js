@@ -1,33 +1,41 @@
 import { StyleSheet } from 'react-native';
 
-const styles = StyleSheet.create({
+export default StyleSheet.create({
     container: {
         flex: 1,
         padding: 10,
     },
     header: {
-        fontSize: 24,
+        fontSize: 20,
         fontWeight: 'bold',
         textAlign: 'center',
-        marginBottom: 20,
+        marginVertical: 10,
+    },
+    datePickerText: {
+        textAlign: 'center',
+        fontSize: 16,
+        color: 'blue', 
+        padding: 10,
+    },
+    datesLabel: {
+        textAlign: 'center',
+        fontSize: 16,
+        marginVertical: 8,
     },
     dayContainer: {
-        marginBottom: 10,
+        marginVertical: 5,
     },
     dayTitle: {
-        fontSize: 18,
+        fontSize: 16,
         fontWeight: 'bold',
-        color: '#000',
     },
     eventContainer: {
         backgroundColor: '#f0f0f0',
-        padding: 5,
+        padding: 10,
         borderRadius: 5,
-        marginBottom: 5,
+        marginVertical: 5,
     },
     eventText: {
-        fontSize: 16,
+        fontSize: 14,
     },
 });
-
-export default styles;

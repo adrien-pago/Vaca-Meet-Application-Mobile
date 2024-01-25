@@ -1,33 +1,118 @@
-import React from 'react';
-import { View, Text, ScrollView } from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { RouteProp } from '@react-navigation/native';
-import { RootStackParamList } from '../App'; 
+import { RootStackParamList } from '../App';
 import styles from '../Styles/ViewPlanningCampingStyles';
-import { PlanningEvent } from './types';
+
+type PlanningEvent = {
+    LIB_ACTIVITE: string;
+    DATE_HEURE_DEBUT: string;
+    DATE_HEURE_FIN: string;
+    DISPLAY_DATE?: string;
+    DISPLAY_TIME?: string;
+};
+
+type PlanningData = {
+    [key: string]: PlanningEvent[];
+};
 
 type ViewPlanningCampingProps = {
     route: RouteProp<RootStackParamList, 'ViewPlanningCamping'>;
 };
 
-
 function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
-    const { planning } = route.params;
+    const [planning, setPlanning] = useState<PlanningData>({});
+    const [startDate, setStartDate] = useState(new Date());
+    const [endDate, setEndDate] = useState(new Date());
+    const [showDatePicker, setShowDatePicker] = useState(false);
 
+    useEffect(() => {
+        loadPlanning(startDate, endDate);
+    }, [startDate, endDate]);
 
-    if (!planning) {
-        return <Text>Aucun planning disponible.</Text>;
-    }
+    const loadPlanning = async (start: Date, end: Date) => {
+        const startDateStr = start.toISOString().split('T')[0];
+        const endDateStr = end.toISOString().split('T')[0];
+    
+        try {
+            const response = await fetch(`https://vaca-meet.fr/PHP_APPLICATION_MOBILE/LoadPlanningCamping.php?dateDebut=${startDateStr}&dateFin=${endDateStr}`);
+    
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+    
+            const data = await response.json();
+    
+            if (data.status === 'success') {
+                const transformedPlanning = transformDataToPlanningStructure(data.data);
+                setPlanning(transformedPlanning); 
+            } else {
+                console.error("Erreur dans la réponse du serveur: ", data.message);
+            }
+        } catch (error) {
+            console.error("Erreur lors de la récupération du planning: ", error);
+        }
+    };
+
+    const transformDataToPlanningStructure = (data: PlanningEvent[]) => {
+        const structuredData: PlanningData = {};
+        data.forEach((event) => {
+            const eventStartDate = new Date(event.DATE_HEURE_DEBUT);
+            const eventEndDate = new Date(event.DATE_HEURE_FIN);
+            const dayFormatted = eventStartDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' });
+            const startTime = eventStartDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+            const endTime = eventEndDate.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' });
+
+            const dayKey = eventStartDate.toISOString().split('T')[0];
+
+            if (!structuredData[dayKey]) {
+                structuredData[dayKey] = [];
+            }
+
+            structuredData[dayKey].push({
+                ...event,
+                DISPLAY_DATE: dayFormatted,
+                DISPLAY_TIME: `de ${startTime} à ${endTime}`,
+            });
+        });
+        return structuredData;
+    };
+
+    const onChangeDate = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
+        if (selectedDate) {
+            setStartDate(selectedDate);
+            setEndDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 6));
+            setShowDatePicker(false);
+        }
+    };
 
     return (
         <ScrollView style={styles.container}>
-            <Text style={styles.header}>Planning de Camping</Text>
-            {Object.keys(planning).map((day) => (
-                <View key={day} style={styles.dayContainer}>
-                    <Text style={styles.dayTitle}>{day}</Text>
-                    {planning[day].map((event: PlanningEvent, index: number) => (
-                        <View key={index} style={styles.eventContainer}>
-                            <Text style={styles.eventText}>{event.LIB_ACTIVITE}</Text>
-                            {/* Autres détails de l'événement */}
+            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                <Text style={styles.datePickerText}>Choisir la semaine</Text>
+            </TouchableOpacity>
+            {showDatePicker && (
+                <DateTimePicker
+                    value={startDate}
+                    mode="date"
+                    is24Hour={true}
+                    display="default"
+                    onChange={onChangeDate}
+                />
+            )}
+            <Text style={styles.header}>Planning du Camping</Text>
+            <Text style={styles.datesLabel}>
+                Du {startDate.toISOString().split('T')[0]} au {endDate.toISOString().split('T')[0]}
+            </Text>
+            {Object.keys(planning).map((dayKey, dayIndex) => (
+                <View key={dayIndex} style={styles.dayContainer}>
+                    {planning[dayKey].length > 0 && (
+                        <Text style={styles.dayTitle}>{planning[dayKey][0].DISPLAY_DATE}</Text>
+                    )}
+                    {planning[dayKey].map((event, eventIndex) => (
+                        <View key={eventIndex} style={styles.eventContainer}>
+                            <Text style={styles.eventText}>{event.LIB_ACTIVITE} {event.DISPLAY_TIME}</Text>
                         </View>
                     ))}
                 </View>

@@ -102,17 +102,6 @@ function HomeCamping({ route }: HomeCampingProps) {
         <TouchableOpacity style={styles.button}>
           <Text style={styles.buttonText}>Voir activité vacancier</Text>
         </TouchableOpacity>
-        <View style={styles.dateControls}>
-          <DateTimePicker
-            style={styles.datePickerStyle}
-            value={selectedDate}
-            mode="date"
-            minimumDate={new Date(2020, 0, 1)}
-            maximumDate={new Date(2025, 11, 31)}
-            onChange={(event: any, date: any) => date && setSelectedDate(date)}
-          />
-        </View>
-        {structuredPlanning && <WeeklyPlanning planning={structuredPlanning} />}
       </View>
     </ImageBackground>
   );
