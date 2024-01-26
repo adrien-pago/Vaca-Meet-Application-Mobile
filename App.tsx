@@ -15,8 +15,8 @@ const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" }
 export type RootStackParamList = {
   Login: undefined;
   Home: { userId: number; userName: string };
-  HomeCamping: {nomCamping: string; idCamping: string;planning: { [key: string]: PlanningEvent[] }; };
-  ViewPlanningCamping: { planning: { [key: string]: PlanningEvent[] } };
+  HomeCamping: {nomCamping: string; idCamping: string ;planning: { [key: string]: PlanningEvent[] }; };
+  ViewPlanningCamping: {nomCamping: string; idCamping: string ; planning: { [key: string]: PlanningEvent[] } };
 };
 
 const defaultValue = {};  //valeur du planning par défault
