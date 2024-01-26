@@ -140,7 +140,7 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="Home" component={HomeScreen} initialParams={{ userId: 0, userName: '' }} />
-        <Stack.Screen name="HomeCamping" component={HomeCamping} initialParams={{ planning: defaultValue }} /> 
+        <Stack.Screen name="HomeCamping" component={HomeCamping} initialParams={{ nomCamping: '', idCamping: '', planning: defaultValue }}/>
         <Stack.Screen name="ViewPlanningCamping" component={ViewPlanningCamping} />
       </Stack.Navigator>
     </NavigationContainer>

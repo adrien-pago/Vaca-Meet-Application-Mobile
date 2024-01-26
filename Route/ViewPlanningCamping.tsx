@@ -26,10 +26,17 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
     const [startDate, setStartDate] = useState(new Date());
     const [endDate, setEndDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [displayDatePicker, setDisplayDatePicker] = useState(false);
 
     useEffect(() => {
         loadPlanning(startDate, endDate);
     }, [startDate, endDate]);
+
+    useEffect(() => {
+        if (showDatePicker) {
+            setDisplayDatePicker(true);
+        }
+    }, [showDatePicker]);
 
     const loadPlanning = async (start: Date, end: Date) => {
         const startDateStr = start.toISOString().split('T')[0];
@@ -82,9 +89,13 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
     const onChangeDate = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
         if (selectedDate) {
             setStartDate(selectedDate);
-            setEndDate(new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate() + 6));
+            // Trouver le prochain dimanche après la date sélectionnée
+            const nextSunday = new Date(selectedDate);
+            nextSunday.setDate(nextSunday.getDate() + (7 - nextSunday.getDay()));
+            setEndDate(nextSunday);
             setShowDatePicker(false);
         }
+        setDisplayDatePicker(false);
     };
 
     return (
@@ -92,7 +103,7 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
             <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                 <Text style={styles.datePickerText}>Choisir la semaine</Text>
             </TouchableOpacity>
-            {showDatePicker && (
+            {displayDatePicker && (
                 <DateTimePicker
                     value={startDate}
                     mode="date"
@@ -103,8 +114,10 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
             )}
             <Text style={styles.header}>Planning du Camping</Text>
             <Text style={styles.datesLabel}>
-                Du {startDate.toISOString().split('T')[0]} au {endDate.toISOString().split('T')[0]}
+                Du {startDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}{' '}
+                au {endDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
             </Text>
+
             {Object.keys(planning).map((dayKey, dayIndex) => (
                 <View key={dayIndex} style={styles.dayContainer}>
                     {planning[dayKey].length > 0 && (
