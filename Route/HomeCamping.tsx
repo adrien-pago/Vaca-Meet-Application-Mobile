@@ -9,7 +9,7 @@ import { PlanningEvent } from './types';
 type HomeCampingProps = {
   route: RouteProp<RootStackParamList, 'HomeCamping'>& {
     params: {
-      nomCamping: string;
+      campingName: string;
       idCamping: string;
       planning: { [key: string]: PlanningEvent[] };
     };
@@ -20,7 +20,7 @@ const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" }
 const defaultProfilePic = require('../ASSET/profil.jpg');
 
 function HomeCamping({ route }: HomeCampingProps) {
-  const { nomCamping, idCamping } = route.params;
+  const { campingName, idCamping } = route.params;
   const [userPhoto, setUserPhoto] = useState(defaultProfilePic);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
 
@@ -36,10 +36,10 @@ function HomeCamping({ route }: HomeCampingProps) {
         <TouchableOpacity style={styles.profilePicContainer}>
           <Image source={userPhoto} style={styles.profilePic} />
         </TouchableOpacity>
-        <Text style={styles.text}>Bienvenue au {nomCamping}</Text>
+        <Text style={styles.text}>Bienvenue au {campingName}</Text>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('ViewPlanningCamping', { planning: structuredPlanning, nomCamping, idCamping })}
+          onPress={() => navigation.navigate('ViewPlanningCamping', { planning: structuredPlanning, campingName, idCamping })}
         >
           <Text style={styles.buttonText}>Voir planning Camping</Text>
         </TouchableOpacity>
