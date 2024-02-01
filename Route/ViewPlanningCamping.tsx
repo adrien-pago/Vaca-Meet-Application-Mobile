@@ -11,6 +11,7 @@ type PlanningEvent = {
     DATE_HEURE_FIN: string;
     DISPLAY_DATE?: string;
     DISPLAY_TIME?: string;
+    LIBELLE_STRUCTURE: string;
 };
 
 type PlanningData = {
@@ -83,8 +84,10 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
                 DISPLAY_TIME: `de ${startTime} à ${endTime}`,
             });
         });
+
         return structuredData;
     };
+   
 
     const onChangeDate = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
         if (selectedDate) {
@@ -125,7 +128,7 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
                     )}
                     {planning[dayKey].map((event, eventIndex) => (
                         <View key={eventIndex} style={styles.eventContainer}>
-                            <Text style={styles.eventText}>{event.LIB_ACTIVITE} {event.DISPLAY_TIME}</Text>
+                            <Text style={styles.eventText}>{event.LIB_ACTIVITE} {event.DISPLAY_TIME} {event.LIBELLE_STRUCTURE}</Text>
                         </View>
                     ))}
                 </View>

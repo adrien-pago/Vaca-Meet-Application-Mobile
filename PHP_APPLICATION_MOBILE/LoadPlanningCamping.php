@@ -17,7 +17,8 @@ if (!$dateDebut || !$dateFin) {
     exit();
 }
 
-$sql = "SELECT LIB_ACTIVITE, DATE_HEURE_DEBUT, DATE_HEURE_FIN FROM EVENEMENT WHERE DATE_HEURE_DEBUT BETWEEN '$dateDebut' AND '$dateFin'";
+$sql = "SELECT e.LIB_ACTIVITE, e.DATE_HEURE_DEBUT, e.DATE_HEURE_FIN, s.LIBELLE_STRUCTURE FROM EVENEMENT e, STRUCTURE s
+WHERE e.ID_STRUCTURE = s.ID_STRUCTURE AND e.DATE_HEURE_DEBUT BETWEEN '$dateDebut' AND '$dateFin'";
 $result = $conn->query($sql);
 
 if (!$result) {
@@ -31,11 +32,12 @@ while($row = $result->fetch_assoc()) {
     $planning[] = array(
         'LIB_ACTIVITE' => $row['LIB_ACTIVITE'],
         'DATE_HEURE_DEBUT' => $row['DATE_HEURE_DEBUT'],
-        'DATE_HEURE_FIN' => $row['DATE_HEURE_FIN']
+        'DATE_HEURE_FIN' => $row['DATE_HEURE_FIN'],
+        'LIBELLE_STRUCTURE' => $row['LIBELLE_STRUCTURE'] 
     );
 }
 
 $conn->close();
 
 echo json_encode(['status' => 'success', 'data' => $planning]);
-?>
+
