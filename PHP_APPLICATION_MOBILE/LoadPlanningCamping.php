@@ -40,4 +40,3 @@ while($row = $result->fetch_assoc()) {
 $conn->close();
 
 echo json_encode(['status' => 'success', 'data' => $planning]);
-

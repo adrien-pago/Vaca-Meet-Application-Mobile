@@ -10,8 +10,16 @@ if ($conn->connect_error) {
 }
 
 $idCamping = isset($_GET['idCamping']) ? $_GET['idCamping'] : '';
+$dateStr = $_GET['date'] ?? null; ;
 
-$query = "SELECT e.LIB_ACTIVITE, v.NOM, r.NB_PLACE, r.HEURE_DEBUT, r.HEURE_FIN FROM COMPTE_VACA_MEET v, EVENEMENT e, ROOM_EVENT r, CAMPING c WHERE c.ID_CAMPING = $idCamping AND c.ID_CAMPING = r.ID_CAMPING AND r.ID_EVENEMENT = e.ID_EVENEMENT AND e.ID_COMPTE_VACA_MEET = v.ID_COMPTE";
+if (!$dateStr) {
+    echo json_encode(['status' => 'error', 'message' => 'Dates manquantes']);
+    exit();
+}
+
+$query = "SELECT e.LIB_ACTIVITE, v.NOM, r.NB_PLACE, r.HEURE_DEBUT, r.HEURE_FIN FROM COMPTE_VACA_MEET v, EVENEMENT e, ROOM_EVENT r, CAMPING c
+WHERE c.ID_CAMPING = $idCamping AND c.ID_CAMPING = r.ID_CAMPING AND r.ID_EVENEMENT = e.ID_EVENEMENT AND v.ID_VACA = r.ID_VACA_INIT
+AND r.HEURE_DEBUT >= $dateStr and r.HEURE_FIN <= $dateStr " ;
 
 $result = $conn->query($query);
 

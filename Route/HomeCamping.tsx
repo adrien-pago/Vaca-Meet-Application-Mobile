@@ -12,7 +12,7 @@ type HomeCampingProps = {
       userId: number;
       userName: string;
       campingName: string;
-      idCamping: string;
+      idCamping: number;
     };
   };
 };

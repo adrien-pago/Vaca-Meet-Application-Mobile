@@ -131,7 +131,7 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
                         )}
                         {planning[dayKey].map((event, eventIndex) => (
                             <View key={eventIndex} style={styles.eventContainer}>
-                                <Text style={styles.eventText}>{event.LIB_ACTIVITE} {event.DISPLAY_TIME} {event.LIBELLE_STRUCTURE}</Text>
+                                <Text style={styles.eventText}>{event.LIB_ACTIVITE} {event.DISPLAY_TIME} Lieu : {event.LIBELLE_STRUCTURE}</Text>
                             </View>
                         ))}
                     </View>

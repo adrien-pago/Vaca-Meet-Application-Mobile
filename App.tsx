@@ -18,9 +18,9 @@ const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png"
 export type RootStackParamList = {
   Login: undefined;
   HomeScreen: { userId: number; userName: string };
-  HomeCamping: {campingName: string; idCamping: string ; userId: number; userName: string };
-  ViewPlanningCamping: {campingName: string; idCamping: string}; 
-  ActivityRoom:{idCamping: string; userId: number}
+  HomeCamping: {campingName: string; idCamping: number ; userId: number; userName: string };
+  ViewPlanningCamping: {campingName: string; idCamping: number}; 
+  ActivityRoom:{idCamping: number; userId: number}
 };
 
 const defaultValue = {};  //valeur du planning par défault
@@ -144,7 +144,7 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="HomeScreen" component={HomeScreen} initialParams={{ userId: 0, userName: '' }} />
-        <Stack.Screen name="HomeCamping" component={HomeCamping} initialParams={{ campingName: '', idCamping: '', userId: 0, userName:''}}/>
+        <Stack.Screen name="HomeCamping" component={HomeCamping} initialParams={{ campingName: '', idCamping: 0, userId: 0, userName:''}}/>
         <Stack.Screen name="ViewPlanningCamping" component={ViewPlanningCamping} />
         <Stack.Screen name="ActivityRoom" component={ActivityRoom} />
       </Stack.Navigator>
