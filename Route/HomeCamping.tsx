@@ -42,7 +42,10 @@ function HomeCamping({ route }: HomeCampingProps) {
         >
           <Text style={styles.buttonText}>Voir planning Camping</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity
+          style={styles.button}
+          onPress={() => navigation.navigate('ActivityRoom', { idCamping, userId})}
+        >
           <Text style={styles.buttonText}>Voir activité vacancier</Text>
         </TouchableOpacity>
       </View>

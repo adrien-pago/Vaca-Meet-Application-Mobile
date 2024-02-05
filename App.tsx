@@ -6,6 +6,8 @@ import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-na
 import HomeScreen from './Route/HomeScreen';
 import HomeCamping from './Route/HomeCamping';
 import ViewPlanningCamping from './Route/ViewPlanningCamping';
+import ActivityRoom from './Route/ActivityRoom';
+
 //import ActivityRoom from './Route/ActivityRoom';
 import styles from './Styles/AppStyles';
 
@@ -18,6 +20,7 @@ export type RootStackParamList = {
   HomeScreen: { userId: number; userName: string };
   HomeCamping: {campingName: string; idCamping: string ; userId: number; userName: string };
   ViewPlanningCamping: {campingName: string; idCamping: string}; 
+  ActivityRoom:{idCamping: string; userId: number}
 };
 
 const defaultValue = {};  //valeur du planning par défault
@@ -143,6 +146,7 @@ export default function App() {
         <Stack.Screen name="HomeScreen" component={HomeScreen} initialParams={{ userId: 0, userName: '' }} />
         <Stack.Screen name="HomeCamping" component={HomeCamping} initialParams={{ campingName: '', idCamping: '', userId: 0, userName:''}}/>
         <Stack.Screen name="ViewPlanningCamping" component={ViewPlanningCamping} />
+        <Stack.Screen name="ActivityRoom" component={ActivityRoom} />
       </Stack.Navigator>
     </NavigationContainer>
   );
