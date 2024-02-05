@@ -1,17 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { View, Text, ImageBackground, TouchableOpacity, Image } from 'react-native';
-import { RouteProp, useNavigation } from '@react-navigation/native';
-import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { RootStackParamList } from '../App';
+import React, { useEffect, useState } from 'react';
+import { View, Text, FlatList, StyleSheet } from 'react-native';
+import { useNavigation } from '@react-navigation/native';
 import styles from '../Styles/ActivityRoomStyles';
-import { PlanningEvent } from './types';
 
-const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png" };
+const ActivityRoom = ({ route }) => {
+  const { idCamping } = route.params;
+  const [activities, setActivities] = useState([]);
 
-return (
-    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
-    </ImageBackground>
-);
+  useEffect(() => {
+    fetch(`'https://vaca-meet.fr/PHP_APPLICATION_MOBILE/LoadActivityRoom.php?idCamping=${idCamping}`)
+      .then(response => response.json())
+      .then(data => setActivities(data))
+      .catch(error => console.error(error));
+  }, []);
 
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={activities}
+        keyExtractor={item => item.id}
+        renderItem={({ item }) => (
+          <View style={styles.item}>
+            <Text style={styles.title}>{item.LIB_ACTIVITE} - {item.NOM}</Text>
+            <Text>Places: {item.NB_PLACE}</Text>
+            <Text>De {item.HEURE_DEBUT} à {item.HEURE_FIN}</Text>
+          </View>
+        )}
+      />
+    </View>
+  );
+};
 
 export default ActivityRoom;

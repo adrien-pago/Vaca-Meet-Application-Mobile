@@ -4,14 +4,15 @@ import { RouteProp, useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../App';
 import styles from '../Styles/HomeCampingStyles';
-import { PlanningEvent } from './types';
+
 
 type HomeCampingProps = {
   route: RouteProp<RootStackParamList, 'HomeCamping'>& {
     params: {
+      userId: number;
+      userName: string;
       campingName: string;
       idCamping: string;
-      planning: { [key: string]: PlanningEvent[] };
     };
   };
 };
@@ -20,11 +21,9 @@ const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png"
 const defaultProfilePic = require('../ASSET/profil.jpg');
 
 function HomeCamping({ route }: HomeCampingProps) {
-  const { campingName, idCamping } = route.params;
+  const { campingName, idCamping, userId, userName } = route.params;
   const [userPhoto, setUserPhoto] = useState(defaultProfilePic);
   const navigation = useNavigation<NativeStackNavigationProp<RootStackParamList>>();
-
-  const [structuredPlanning, setStructuredPlanning] = useState<{ [key: string]: PlanningEvent[] }>({});
 
   useEffect(() => {
     // Charger les informations de l'utilisateur (logique à implémenter)
@@ -36,10 +35,10 @@ function HomeCamping({ route }: HomeCampingProps) {
         <TouchableOpacity style={styles.profilePicContainer}>
           <Image source={userPhoto} style={styles.profilePic} />
         </TouchableOpacity>
-        <Text style={styles.text}>Bienvenue au {campingName}</Text>
+        <Text style={styles.text}>{userName} Bienvenue au {campingName}</Text>
         <TouchableOpacity
           style={styles.button}
-          onPress={() => navigation.navigate('ViewPlanningCamping', { planning: structuredPlanning, campingName, idCamping })}
+          onPress={() => navigation.navigate('ViewPlanningCamping', { campingName, idCamping })}
         >
           <Text style={styles.buttonText}>Voir planning Camping</Text>
         </TouchableOpacity>

@@ -6,17 +6,18 @@ import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-na
 import HomeScreen from './Route/HomeScreen';
 import HomeCamping from './Route/HomeCamping';
 import ViewPlanningCamping from './Route/ViewPlanningCamping';
+//import ActivityRoom from './Route/ActivityRoom';
 import styles from './Styles/AppStyles';
-import { PlanningEvent } from './Route/types';
+
 
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png" };
 
 // gérer les routes de navigation //
 export type RootStackParamList = {
   Login: undefined;
-  Home: { userId: number; userName: string };
-  HomeCamping: {campingName: string; idCamping: string ;planning: { [key: string]: PlanningEvent[] }; };
-  ViewPlanningCamping: {campingName: string; idCamping: string ; planning: { [key: string]: PlanningEvent[] } };
+  HomeScreen: { userId: number; userName: string };
+  HomeCamping: {campingName: string; idCamping: string ; userId: number; userName: string };
+  ViewPlanningCamping: {campingName: string; idCamping: string}; 
 };
 
 const defaultValue = {};  //valeur du planning par défault
@@ -55,7 +56,7 @@ function LoginScreen({ navigation }: LoginScreenProps) {
       let json = await response.json();
       Alert.alert("Réponse du serveur:", json.message);
       if (json.status === 'success') {
-        navigation.navigate('Home', { userId: 1, userName: nom }); //envoyer vers la page HomeScreen.tsx
+        navigation.navigate('HomeScreen', { userId: 1, userName: nom }); //envoyer vers la page HomeScreen.tsx
       } else {
         Alert.alert("Erreur", json.message || "Une erreur est survenue lors de la connexion.");
       }
@@ -139,8 +140,8 @@ export default function App() {
     <NavigationContainer>
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
-        <Stack.Screen name="Home" component={HomeScreen} initialParams={{ userId: 0, userName: '' }} />
-        <Stack.Screen name="HomeCamping" component={HomeCamping} initialParams={{ campingName: '', idCamping: '', planning: defaultValue }}/>
+        <Stack.Screen name="HomeScreen" component={HomeScreen} initialParams={{ userId: 0, userName: '' }} />
+        <Stack.Screen name="HomeCamping" component={HomeCamping} initialParams={{ campingName: '', idCamping: '', userId: 0, userName:''}}/>
         <Stack.Screen name="ViewPlanningCamping" component={ViewPlanningCamping} />
       </Stack.Navigator>
     </NavigationContainer>

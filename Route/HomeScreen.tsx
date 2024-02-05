@@ -2,19 +2,18 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ImageBackground, TouchableOpacity, TextInput, Image, Alert } from 'react-native';
 import { Picker } from '@react-native-picker/picker';
 import HomeScreenStyle from '../Styles/HomeScreenStyles';
-import { PlanningEvent } from './types';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png" };
 
 type RootStackParamList = {
-  Home: { userId: number; userName: string };
-  HomeCamping: { campingId: number; campingName: string; planning: { [key: string]: PlanningEvent[] } };
+  HomeScreen: { userId: number; userName: string };
+  HomeCamping: { campingId: number; campingName: string; userId: number; userName: string };
 };
 
-type HomeScreenRouteProp = RouteProp<RootStackParamList, 'Home'>;
-type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'Home'>;
+type HomeScreenRouteProp = RouteProp<RootStackParamList, 'HomeScreen'>;
+type HomeScreenNavigationProp = NativeStackNavigationProp<RootStackParamList, 'HomeScreen'>;
 
 type HomeScreenProps = {
   route: HomeScreenRouteProp;
@@ -81,7 +80,8 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
         navigation.navigate('HomeCamping', { 
           campingId: selectedCamping,
           campingName: selectedCampingData.nom,
-          planning: {} 
+          userId , 
+          userName
         });
       } else {
         Alert.alert("Erreur de connexion", json.message || "Une erreur est survenue.");
