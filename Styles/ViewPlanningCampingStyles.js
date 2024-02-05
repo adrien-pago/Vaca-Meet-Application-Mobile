@@ -1,11 +1,15 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
+
+    backgroundImage: {
+        flex: 1,
+        resizeMode: 'cover',
+      },
+
     container: {
         flex: 1,
         padding: 10,
-        backgroundColor: '#fff', // Fond blanc pour la lisibilité
-        // Ajoutez votre image de fond ici si disponible
     },
     header: {
         fontSize: 22,

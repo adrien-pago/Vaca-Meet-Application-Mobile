@@ -9,7 +9,7 @@ import ViewPlanningCamping from './Route/ViewPlanningCamping';
 import styles from './Styles/AppStyles';
 import { PlanningEvent } from './Route/types';
 
-const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" };
+const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png" };
 
 // gérer les routes de navigation //
 export type RootStackParamList = {

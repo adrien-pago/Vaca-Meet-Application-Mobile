@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity,ImageBackground } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 import styles from '../Styles/ViewPlanningCampingStyles';
+
+const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png" };
 
 type PlanningEvent = {
     LIB_ACTIVITE: string;
@@ -102,38 +104,40 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
     };
 
     return (
-        <ScrollView style={styles.container}>
-            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                <Text style={styles.datePickerText}>Choisir la semaine</Text>
-            </TouchableOpacity>
-            {displayDatePicker && (
-                <DateTimePicker
-                    value={startDate}
-                    mode="date"
-                    is24Hour={true}
-                    display="default"
-                    onChange={onChangeDate}
-                />
-            )}
-            <Text style={styles.header}>Planning du Camping</Text>
-            <Text style={styles.datesLabel}>
-                Du {startDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}{' '}
-                au {endDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
-            </Text>
+        <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+            <ScrollView style={styles.container}>
+                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                    <Text style={styles.datePickerText}>Choisir la semaine</Text>
+                </TouchableOpacity>
+                {displayDatePicker && (
+                    <DateTimePicker
+                        value={startDate}
+                        mode="date"
+                        is24Hour={true}
+                        display="default"
+                        onChange={onChangeDate}
+                    />
+                )}
+                <Text style={styles.header}>Planning du Camping</Text>
+                <Text style={styles.datesLabel}>
+                    Du {startDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}{' '}
+                    au {endDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+                </Text>
 
-            {Object.keys(planning).map((dayKey, dayIndex) => (
-                <View key={dayIndex} style={styles.dayContainer}>
-                    {planning[dayKey].length > 0 && (
-                        <Text style={styles.dayTitle}>{planning[dayKey][0].DISPLAY_DATE}</Text>
-                    )}
-                    {planning[dayKey].map((event, eventIndex) => (
-                        <View key={eventIndex} style={styles.eventContainer}>
-                            <Text style={styles.eventText}>{event.LIB_ACTIVITE} {event.DISPLAY_TIME} {event.LIBELLE_STRUCTURE}</Text>
-                        </View>
-                    ))}
-                </View>
-            ))}
-        </ScrollView>
+                {Object.keys(planning).map((dayKey, dayIndex) => (
+                    <View key={dayIndex} style={styles.dayContainer}>
+                        {planning[dayKey].length > 0 && (
+                            <Text style={styles.dayTitle}>{planning[dayKey][0].DISPLAY_DATE}</Text>
+                        )}
+                        {planning[dayKey].map((event, eventIndex) => (
+                            <View key={eventIndex} style={styles.eventContainer}>
+                                <Text style={styles.eventText}>{event.LIB_ACTIVITE} {event.DISPLAY_TIME} {event.LIBELLE_STRUCTURE}</Text>
+                            </View>
+                        ))}
+                    </View>
+                ))}
+            </ScrollView>
+        </ImageBackground>
     );
 }
 

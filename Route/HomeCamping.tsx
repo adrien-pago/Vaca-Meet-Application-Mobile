@@ -16,7 +16,7 @@ type HomeCampingProps = {
   };
 };
 
-const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/fond_vaca_meet.jpg" };
+const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png" };
 const defaultProfilePic = require('../ASSET/profil.jpg');
 
 function HomeCamping({ route }: HomeCampingProps) {
