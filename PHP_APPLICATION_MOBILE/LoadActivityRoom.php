@@ -3,35 +3,50 @@ require_once 'config.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
+// Création de la connexion à la base de données
 $conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
+
+// Vérification de la connexion
 if ($conn->connect_error) {
     echo json_encode(['status' => 'error', 'message' => 'La connexion à la base de données a échoué']);
+    exit(); // Utilisation de exit pour arrêter le script en cas d'erreur
+}
+
+// Récupération des paramètres GET et validation
+$idCamping = isset($_GET['idCamping']) ? (int)$_GET['idCamping'] : null;
+$dateStr = isset($_GET['date']) ? $_GET['date'] : null;
+
+// Validation des entrées
+if (empty($idCamping) || empty($dateStr)) {
+    echo json_encode(['status' => 'error', 'message' => 'Paramètres idCamping ou date manquants ou invalides']);
     exit();
 }
 
-$idCamping = isset($_GET['idCamping']) ? $_GET['idCamping'] : '';
-$dateStr = $_GET['date'] ?? null; ;
+// Préparation de la requête
+$query = "SELECT e.LIB_ACTIVITE, v.NOM, r.NB_PLACE, r.HEURE_DEBUT, r.HEURE_FIN FROM COMPTE_VACA_MEET v, EVENEMENT e, ROOM_EVENT r, CAMPING c 
+WHERE c.ID_CAMPING = ? AND c.ID_CAMPING = r.ID_CAMPING AND r.ID_EVENEMENT = e.ID_EVENEMENT AND v.ID_VACA = r.ID_VACA_INIT 
+AND DATE(r.HEURE_DEBUT) = ?";
 
-if (!$dateStr) {
-    echo json_encode(['status' => 'error', 'message' => 'Dates manquantes']);
+// Exécution de la requête
+$stmt = $conn->prepare($query);
+if (!$stmt) {
+    echo json_encode(['status' => 'error', 'message' => 'Erreur de préparation de la requête']);
     exit();
 }
 
-$query = "SELECT e.LIB_ACTIVITE, v.NOM, r.NB_PLACE, r.HEURE_DEBUT, r.HEURE_FIN FROM COMPTE_VACA_MEET v, EVENEMENT e, ROOM_EVENT r, CAMPING c
-WHERE c.ID_CAMPING = $idCamping AND c.ID_CAMPING = r.ID_CAMPING AND r.ID_EVENEMENT = e.ID_EVENEMENT AND v.ID_VACA = r.ID_VACA_INIT
-AND r.HEURE_DEBUT >= $dateStr and r.HEURE_FIN <= $dateStr " ;
+$stmt->bind_param('is', $idCamping, $dateStr);
+$stmt->execute();
+$result = $stmt->get_result();
 
-$result = $conn->query($query);
-
+// Construction et envoi de la réponse JSON
 $activities = [];
 if ($result->num_rows > 0) {
-    while($row = $result->fetch_assoc()) {
+    while ($row = $result->fetch_assoc()) {
         $activities[] = $row;
     }
-    echo json_encode($activities);
-} else {
-    echo json_encode(['status' => 'error', 'message' => 'Aucune activité trouvée']);
-}
+    echo json_encode(['status' => 'success', 'data' => $activities]);
+} 
 
+// Fermeture de la connexion
 $conn->close();
 ?>

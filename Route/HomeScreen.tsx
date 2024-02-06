@@ -9,7 +9,7 @@ const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png"
 
 type RootStackParamList = {
   HomeScreen: { userId: number; userName: string };
-  HomeCamping: { campingId: number; campingName: string; userId: number; userName: string };
+  HomeCamping: { idCamping: number; campingName: string; userId: number; userName: string };
 };
 
 type HomeScreenRouteProp = RouteProp<RootStackParamList, 'HomeScreen'>;
@@ -78,7 +78,7 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
       let json = await response.json();
       if(json.status === 'success') {
         navigation.navigate('HomeCamping', { 
-          campingId: selectedCamping,
+          idCamping: selectedCamping,
           campingName: selectedCampingData.nom,
           userId , 
           userName
