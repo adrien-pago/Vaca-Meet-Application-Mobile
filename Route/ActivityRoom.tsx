@@ -17,69 +17,75 @@ type ActivityEvent = {
     DISPLAY_TIME?: string;
 };
 
-type ActivityRoomProps = {
-    route: RouteProp<RootStackParamList, 'ActivityRoom'> & {
-        params: {
-            idCamping: number;
-        };
-    };
+type NomActivite = {
+    id: string;
+    nom: string;
 };
 
-function ActivityRoom({ route }: ActivityRoomProps) {
+type ActivityRoomProps = {
+    route: RouteProp<RootStackParamList, 'ActivityRoom'>;
+};
+
+const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
     const { idCamping } = route.params;
     const [activities, setActivities] = useState<ActivityEvent[]>([]);
+    const [nomActivites, setNomActivites] = useState<NomActivite[]>([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
     const [modalVisible, setModalVisible] = useState(false);
-    const [selectedActivity, setSelectedActivity] = useState('');
+    const [selectedActivity, setSelectedActivity] = useState<string>('');
     const [startTime, setStartTime] = useState(new Date());
     const [endTime, setEndTime] = useState(new Date());
-    const [nbPlace, setNbPlace] = useState('');
-
-    // États pour contrôler l'affichage des DateTimePickers
+    const [nbPlace, setNbPlace] = useState<string>('');
     const [showStartTimePicker, setShowStartTimePicker] = useState(false);
     const [showEndTimePicker, setShowEndTimePicker] = useState(false);
 
     useEffect(() => {
         loadActivities(selectedDate);
-    }, [selectedDate]);
+        fetchNomActivites();
+    }, [selectedDate, idCamping]);
 
     const loadActivities = async (date: Date) => {
         const dateStr = date.toISOString().split('T')[0];
-
         try {
             const response = await fetch(`https://vaca-meet.fr/PHP_APPLICATION_MOBILE/LoadActivityRoom.php?idCamping=${idCamping}&date=${dateStr}`);
-
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
-
             const data = await response.json();
             if (data.status === 'success') {
-                const formattedActivities = data.data.map((activity: ActivityEvent) => {
-                    const startTime = new Date(activity.HEURE_DEBUT).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit'}) +'h';
-                    const endTime = new Date(activity.HEURE_FIN).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' }) +'h';
-
-                    return {
-                        ...activity,
-                        DISPLAY_TIME: `De ${startTime} à ${endTime}`
-                    };
-                });
+                const formattedActivities: ActivityEvent[] = data.data.map((activity: ActivityEvent) => ({
+                    ...activity,
+                    DISPLAY_TIME: `De ${new Date(activity.HEURE_DEBUT).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit'})}h à ${new Date(activity.HEURE_FIN).toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit'})}h`
+                }));
                 setActivities(formattedActivities);
             } else {
                 console.error("Erreur dans la réponse du serveur: ", data.message);
-                setActivities([]);
             }
         } catch (error) {
             console.error("Erreur lors de la récupération des activités: ", error);
-            setActivities([]);
+        }
+    };
+
+    const fetchNomActivites = async () => {
+        try {
+            const response = await fetch(`https://vaca-meet.fr/PHP_APPLICATION_MOBILE/NomActivityCombo.php?idCamping=${idCamping}`);
+            if (!response.ok) {
+                throw new Error('Erreur réseau');
+            }
+            const activites: NomActivite[] = await response.json();
+            setNomActivites(activites);
+            if (activites.length > 0) {
+                setSelectedActivity(activites[0].id);
+            }
+        } catch (error) {
+            console.error("Erreur lors du chargement des noms d'activités", error);
         }
     };
 
     const onChangeDate = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
         if (selectedDate) {
-            selectedDate.setHours(0, 0, 0, 0);
-            setSelectedDate(selectedDate);
+            setSelectedDate(new Date(selectedDate.setHours(0, 0, 0, 0)));
             setShowDatePicker(false);
         }
     };
@@ -99,8 +105,9 @@ function ActivityRoom({ route }: ActivityRoomProps) {
     };
 
     const submitActivity = async () => {
+        // Implémentez votre logique d'envoi ici
+        console.log("Activité soumise :", { selectedActivity, startTime, endTime, nbPlace });
         setModalVisible(false);
-        // Ici, vous pouvez envoyer les données au serveur via fetch()
     };
 
     return (
@@ -145,33 +152,25 @@ function ActivityRoom({ route }: ActivityRoomProps) {
                         <Picker
                             selectedValue={selectedActivity}
                             style={styles.picker}
-                            onValueChange={(itemValue: string | number, itemIndex: number) => setSelectedActivity(itemValue.toString())}
-                        >
-                            <Picker.Item label="Activité 1" value="1" />
-                            <Picker.Item label="Activité 2" value="2" />
+                            onValueChange={(itemValue) => setSelectedActivity(itemValue.toString())}>
+                            {nomActivites.map((activite) => (
+                                <Picker.Item key={activite.id} label={activite.nom} value={activite.id} />
+                            ))}
                         </Picker>
-                        <TouchableOpacity onPress={() => setShowStartTimePicker(true)}>
-                            <Text>Afficher le sélecteur de début</Text>
-                        </TouchableOpacity>
-                        {showStartTimePicker && (
-                            <DateTimePicker
-                                value={startTime}
-                                mode="datetime"
-                                display="default"
-                                onChange={onChangeStartTime}
-                            />
-                        )}
-                        <TouchableOpacity onPress={() => setShowEndTimePicker(true)}>
-                            <Text>Afficher le sélecteur de fin</Text>
-                        </TouchableOpacity>
-                        {showEndTimePicker && (
-                            <DateTimePicker
-                                value={endTime}
-                                mode="datetime"
-                                display="default"
-                                onChange={onChangeEndTime}
-                            />
-                        )}
+                        <Text style={styles.label}>Date et heure début :</Text>
+                        <DateTimePicker
+                            value={startTime}
+                            mode="datetime"
+                            display="default"
+                            onChange={onChangeStartTime}
+                        />
+                        <Text style={styles.label}>Date et heure fin :</Text>
+                        <DateTimePicker
+                            value={endTime}
+                            mode="datetime"
+                            display="default"
+                            onChange={onChangeEndTime}
+                        />
                         <TextInput
                             placeholder="Nombre de places"
                             keyboardType="numeric"
@@ -179,13 +178,15 @@ function ActivityRoom({ route }: ActivityRoomProps) {
                             value={nbPlace}
                             style={styles.input}
                         />
-                        <Button title="Valider" onPress={submitActivity} />
-                        <Button title="Annuler" onPress={() => setModalVisible(false)} />
+                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+                            <Button title="Valider" onPress={submitActivity} ></Button>
+                            <Button title="Annuler" onPress={() => setModalVisible(false)} ></Button>
+                        </View>
                     </View>
                 </Modal>
             </ScrollView>
         </ImageBackground>
     );
-}
+};
 
 export default ActivityRoom;
