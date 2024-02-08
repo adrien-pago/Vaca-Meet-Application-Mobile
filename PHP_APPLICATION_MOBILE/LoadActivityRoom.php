@@ -23,9 +23,9 @@ if (empty($idCamping) || empty($dateStr)) {
 }
 
 // Préparation de la requête
-$query = "SELECT v.NOM, r.LIBELLE_EVENT_ROOM, r.DATE, r.HEURE, r.NB_VACA_JOIN  FROM COMPTE_VACA_MEET v,  ROOM_EVENT r, CAMPING c 
+$query = "SELECT v.NOM, r.LIBELLE_EVENT_ROOM, r.DATE_EVENT_ROOM, r.HEURE, r.NB_VACA_JOIN  FROM COMPTE_VACA_MEET v,  ROOM_EVENT r, CAMPING c 
 WHERE c.ID_CAMPING = ? AND c.ID_CAMPING = r.ID_CAMPING  AND v.ID_VACA = r.ID_VACA_INIT 
-AND DATE(r.DATE) = ?";
+AND DATE(r.DATE_EVENT_ROOM) = ?";
 
 // Exécution de la requête
 $stmt = $conn->prepare($query);

@@ -10,14 +10,13 @@ if ($conn->connect_error) {
     exit;
 }
 
-$id_vaca_init = $_POST['id_vaca_init'];
-$id_camping = $_POST['id_camping'];
-$id_activite = $_POST['id_activite'];
-$heure_debut = $_POST['heure_debut'];
-$heure_fin = $_POST['heure_fin'];
-$nb_place = $_POST['nb_place'];
+$idVacaInit = isset($_POST['id_vaca_init']) ? (int)$_POST['id_vaca_init'] : null;
+$idCamping = isset($_POST['id_camping']) ? (int)$_POST['id_camping'] : null;
+$date = isset($_POST['date']) ? $_POST['date'] : null;
+$heure = isset($_POST['heure']) ? $_POST['heure'] : null;
+$libelle = isset($_POST['libelle']) ? $_POST['libelle'] : null; 
 
-$sql = "INSERT INTO ROOM_EVENT (ID_VACA_INIT, ID_ACTIVITE, HEURE_DEBUT, HEURE_FIN, NB_PLACE, ID_CAMPING) VALUES (?, ?, ?, ?, ?, ?)";
+$sql = "INSERT INTO ROOM_EVENT (ID_VACA_INIT, ID_CAMPING, DATE_ROOM_EVENT, HEURE, LIBELLE_EVENT_ROOM) VALUES (?, ?, ?, ?, ?)";
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
@@ -25,12 +24,13 @@ if (!$stmt) {
     exit;
 }
 
-$stmt->bind_param("iisssi", $id_vaca_init, $id_activite, $heure_debut, $heure_fin, $nb_place, $id_camping);
+// Ajustez les variables à lier en fonction de la requête corrigée
+$stmt->bind_param("iisss", $idVacaInit, $idCamping, $date, $heure, $libelle);
 
 if ($stmt->execute()) {
     echo json_encode(['status' => 'success', 'message' => 'Activité ajoutée avec succès']);
 } else {
-    echo json_encode(['status' => 'error', 'message' => 'Erreur lors de l\'ajout de l\'activité']);
+    echo json_encode(['status' => 'error', 'message' => 'Erreur lors de l\'ajout de l\'activité: ' . $stmt->error]);
 }
 
 $stmt->close();
