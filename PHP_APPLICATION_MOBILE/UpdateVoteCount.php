@@ -20,20 +20,11 @@ if (empty($idRoomEvent) || empty($action)) {
     exit();
 }
 
-// Connexion à la base de données
-$conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
-
-// Vérification de la connexion
-if ($conn->connect_error) {
-    echo json_encode(['status' => 'error', 'message' => 'La connexion à la base de données a échoué']);
-    exit();
-}
-
 // Mettre à jour le nombre de votes en fonction de l'action de l'utilisateur
 if ($action === 'upvote') {
-    $sql = "UPDATE ROOM_EVENT SET NB_VACA = NB_VACA + 1 WHERE ID_ROOM_EVENT = ?";
+    $sql = "UPDATE ROOM_EVENT SET NB_VACA_JOIN = NB_VACA_JOIN + 1 WHERE ID_ROOM_EVENT = ?";
 } elseif ($action === 'downvote') {
-    $sql = "UPDATE ROOM_EVENT SET NB_VACA = NB_VACA - 1 WHERE ID_ROOM_EVENT = ?";
+    $sql = "UPDATE ROOM_EVENT SET NB_VACA_JOIN = NB_VACA_JOIN - 1 WHERE ID_ROOM_EVENT = ?";
 }
 
 // Préparation de la requête

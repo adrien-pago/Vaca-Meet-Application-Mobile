@@ -113,7 +113,9 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                     action: interestedActivities.includes(activityId) ? 'downvote' : 'upvote',
                 }),
             });
+        
             const data = await response.json();
+            console.log("Réponse du serveur:", data);
             if (data.status === 'success') {
                 // Mettre à jour l'état des activités seulement si la mise à jour de la base de données est réussie
                 const updatedActivities = activities.map(activity => {
@@ -132,6 +134,7 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
             }
         } catch (error) {
             console.error('Erreur lors de la mise à jour du nombre de votes: ', error);
+            console.error('Erreur lors de l\'analyse de la réponse JSON: ', error);
         }
     };
 
