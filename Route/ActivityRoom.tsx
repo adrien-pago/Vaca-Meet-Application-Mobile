@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Modal, Button, TextInput, ImageBackground } from 'react-native';
+import { Picker } from '@react-native-picker/picker';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
@@ -13,7 +14,7 @@ type ActivityEvent = {
     NB_PLACE: number;
     HEURE_DEBUT: string;
     HEURE_FIN: string;
-    DISPLAY_TIME?: string; // Pour afficher l'heure formatée
+    DISPLAY_TIME?: string;
 };
 
 type ActivityRoomProps = {
@@ -29,6 +30,15 @@ function ActivityRoom({ route }: ActivityRoomProps) {
     const [activities, setActivities] = useState<ActivityEvent[]>([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
+    const [modalVisible, setModalVisible] = useState(false);
+    const [selectedActivity, setSelectedActivity] = useState('');
+    const [startTime, setStartTime] = useState(new Date());
+    const [endTime, setEndTime] = useState(new Date());
+    const [nbPlace, setNbPlace] = useState('');
+
+    // États pour contrôler l'affichage des DateTimePickers
+    const [showStartTimePicker, setShowStartTimePicker] = useState(false);
+    const [showEndTimePicker, setShowEndTimePicker] = useState(false);
 
     useEffect(() => {
         loadActivities(selectedDate);
@@ -74,6 +84,25 @@ function ActivityRoom({ route }: ActivityRoomProps) {
         }
     };
 
+    const onChangeStartTime = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
+        if (selectedDate) {
+            setStartTime(selectedDate);
+        }
+        setShowStartTimePicker(false);
+    };
+
+    const onChangeEndTime = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
+        if (selectedDate) {
+            setEndTime(selectedDate);
+        }
+        setShowEndTimePicker(false);
+    };
+
+    const submitActivity = async () => {
+        setModalVisible(false);
+        // Ici, vous pouvez envoyer les données au serveur via fetch()
+    };
+
     return (
         <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
             <ScrollView style={styles.container}>
@@ -93,6 +122,9 @@ function ActivityRoom({ route }: ActivityRoomProps) {
                 <Text style={styles.datesLabel}>
                     {selectedDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
                 </Text>
+                <TouchableOpacity onPress={() => setModalVisible(true)} style={styles.button}>
+                    <Text style={styles.buttonText}>Proposer une activité</Text>
+                </TouchableOpacity>
                 {activities.map((activity, index) => (
                     <View key={index} style={styles.activityContainer}>
                         <Text style={styles.activityText}>
@@ -101,6 +133,56 @@ function ActivityRoom({ route }: ActivityRoomProps) {
                         </Text>
                     </View>
                 ))}
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => {
+                        setModalVisible(!modalVisible);
+                    }}>
+                    <View style={styles.modalView}>
+                        <Text style={styles.modalText}>Proposer une activité</Text>
+                        <Picker
+                            selectedValue={selectedActivity}
+                            style={styles.picker}
+                            onValueChange={(itemValue: string | number, itemIndex: number) => setSelectedActivity(itemValue.toString())}
+                        >
+                            <Picker.Item label="Activité 1" value="1" />
+                            <Picker.Item label="Activité 2" value="2" />
+                        </Picker>
+                        <TouchableOpacity onPress={() => setShowStartTimePicker(true)}>
+                            <Text>Afficher le sélecteur de début</Text>
+                        </TouchableOpacity>
+                        {showStartTimePicker && (
+                            <DateTimePicker
+                                value={startTime}
+                                mode="datetime"
+                                display="default"
+                                onChange={onChangeStartTime}
+                            />
+                        )}
+                        <TouchableOpacity onPress={() => setShowEndTimePicker(true)}>
+                            <Text>Afficher le sélecteur de fin</Text>
+                        </TouchableOpacity>
+                        {showEndTimePicker && (
+                            <DateTimePicker
+                                value={endTime}
+                                mode="datetime"
+                                display="default"
+                                onChange={onChangeEndTime}
+                            />
+                        )}
+                        <TextInput
+                            placeholder="Nombre de places"
+                            keyboardType="numeric"
+                            onChangeText={setNbPlace}
+                            value={nbPlace}
+                            style={styles.input}
+                        />
+                        <Button title="Valider" onPress={submitActivity} />
+                        <Button title="Annuler" onPress={() => setModalVisible(false)} />
+                    </View>
+                </Modal>
             </ScrollView>
         </ImageBackground>
     );
