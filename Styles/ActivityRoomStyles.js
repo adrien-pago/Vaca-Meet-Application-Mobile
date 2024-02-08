@@ -22,9 +22,9 @@ const styles = StyleSheet.create({
     datePickerText: {
         textAlign: 'center',
         fontSize: 18,
-        color: '#007bff',
+        color: '#ffffff', 
         padding: 12,
-        backgroundColor: '#f8f9fa',
+        backgroundColor: '#6A5ACD', 
         borderRadius: 8,
         marginVertical: 8,
         elevation: 2,
@@ -73,18 +73,18 @@ const styles = StyleSheet.create({
         shadowRadius: 5,
         elevation: 10
     },
-
-    modalText: {
-        marginBottom: 15,
-        textAlign: "center",
-        fontSize: 20, // Rend le texte légèrement plus grand pour le titre
-        fontWeight: 'bold', // Ajoute du poids au texte pour le titre
+    text: {
+        textAlign: 'center',
+        fontSize: 20,
+        marginVertical: 10,
+        color: 'black', 
+        fontWeight: 'bold',
     },
 
     picker: {
-        width: '100%', // Utilisez 100% de la largeur pour le rendre responsive
+        width: '100%', 
         height: 50,
-        marginVertical: 10, // Ajoute un espacement vertical
+        marginVertical: 10, 
     },
 
     label: {
@@ -94,22 +94,23 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
     },
 
-    // Ajustez le style des boutons pour qu'ils correspondent à la largeur des champs de formulaire
     button: {
-        backgroundColor: '#007bff',
         padding: 12,
-        borderRadius: 20,
-        alignItems: 'center',
-        marginVertical: 10, // Ajout d'un espacement vertical
-        width: '100%', // Assurez-vous que les boutons occupent la largeur
+        backgroundColor: '#6A5ACD', 
+        borderRadius: 8,
+        marginVertical: 8,
+        elevation: 2,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
     },
-
     buttonText: {
-        color: '#ffffff',
+        color: '#ffffff', 
+        textAlign: 'center',
         fontSize: 18,
     },
 
-    // Ajoutez ou ajustez vos styles ici
     buttonContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
@@ -121,18 +122,30 @@ const styles = StyleSheet.create({
         height: 50,
         marginVertical: 10,
         borderWidth: 1,
-        borderColor: '#007bff', // Ajoute de la couleur à la bordure
+        borderColor: '#007bff', 
         borderRadius: 10,
         padding: 10,
         fontSize: 16,
-        backgroundColor: '#f8f9fa', // Couleur de fond pour distinguer les champs
-        width: '100%', // Assurez-vous que l'input occupe la largeur complète
+        backgroundColor: '#f8f9fa', 
+        width: '100%', 
     },
 
+    detailContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    
+    voteContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    
     upvoteIcon: {
         width: 30,
         height: 30,
         resizeMode: 'contain',
+        marginLeft: 10, 
     },
 
     upvoteIconActive: {

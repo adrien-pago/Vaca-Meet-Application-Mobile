@@ -16,28 +16,28 @@ export default StyleSheet.create({
         fontWeight: 'bold',
         textAlign: 'center',
         marginVertical: 15,
-        color: '#333', // Couleur pour le titre
+        color: '#333', 
     },
     datePickerText: {
         textAlign: 'center',
         fontSize: 18,
-        color: '#007bff', // Une couleur bleue plus vive
+        color: '#ffffff', 
         padding: 12,
-        backgroundColor: '#f8f9fa', // Un fond léger pour le sélecteur de date
+        backgroundColor: '#6A5ACD', 
         borderRadius: 8,
         marginVertical: 8,
-        elevation: 2, // Ombre pour Android
-        shadowColor: '#000', // Ombre pour iOS
+        elevation: 2,
+        shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
         shadowRadius: 2,
     },
     datesLabel: {
         textAlign: 'center',
-        fontSize: 17,
+        fontSize: 18,
         marginVertical: 10,
-        fontWeight: '500',
-        color: '#555', // Couleur du texte
+        color: '#333', 
+        fontWeight: 'bold',
     },
     dayContainer: {
         marginVertical: 7,

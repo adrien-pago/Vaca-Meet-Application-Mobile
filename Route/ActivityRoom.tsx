@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Modal, TextInput, ImageBackground,Button, Image, StyleSheet  } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Modal, TextInput, ImageBackground, Button, Image } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 import styles from '../Styles/ActivityRoomStyles';
 
 const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png" };
-const upvoteIcon = require('../ASSET/upvote.png'); 
+const upvoteIcon = require('../ASSET/upvote.png');
 
 type ActivityEvent = {
     LIBELLE_EVENT_ROOM: string;
@@ -15,7 +15,7 @@ type ActivityEvent = {
     DATE: Date;
     HEURE: string;
     DISPLAY_TIME?: string;
-    ID_ROOM_EVENT:number;
+    ID_ROOM_EVENT: number;
 };
 
 type ActivityRoomProps = {
@@ -23,16 +23,15 @@ type ActivityRoomProps = {
 };
 
 const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
-    const { idCamping,userId } = route.params;
+    const { idCamping, userId } = route.params;
     const [activities, setActivities] = useState<ActivityEvent[]>([]);
     const [selectedDate, setSelectedDate] = useState(new Date());
     const [showDatePicker, setShowDatePicker] = useState(false);
-    const [modalVisible, setModalVisible] = useState(false);
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [formDate, setFormDate] = useState('');
     const [formHeure, setFormHeure] = useState('');
     const [formLibelle, setFormLibelle] = useState('');
-    const [interestedActivities, setInterestedActivities] = useState<number[]>([]); // Stockez les activités sur lesquelles l'utilisateur a cliqué
+    const [interestedActivities, setInterestedActivities] = useState<number[]>([]);
 
     useEffect(() => {
         loadActivities(selectedDate);
@@ -57,7 +56,7 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                 console.error("Erreur dans la réponse du serveur: ", data.message);
             }
         } catch (error) {
-           // console.error("Erreur lors de la récupération des activités: ", error);
+            //console.error("Erreur lors de la récupération des activités: ", error);
         }
     };
 
@@ -71,16 +70,17 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
 
     /// Variable formulaire  + insert en base ///
     const handleAddActivity = async () => {
-        if (!formDate || !formHeure || !formLibelle ) {
+        if (!formDate || !formHeure || !formLibelle) {
             alert('Veuillez remplir tous les champs.');
             return;
         }
         const formData = new FormData();
-        formData.append('id_vaca_init', `${userId}`); 
+        formData.append('id_vaca_init', `${userId}`);
         formData.append('id_camping', `${idCamping}`);
         formData.append('date', formDate);
         formData.append('heure', formHeure);
         formData.append('libelle', formLibelle);
+
         try {
             const response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/InsertActivityRoom.php', {
                 method: 'POST',
@@ -113,16 +113,14 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                     action: interestedActivities.includes(activityId) ? 'downvote' : 'upvote',
                 }),
             });
-        
+
             const data = await response.json();
-            console.log("Réponse du serveur:", data);
             if (data.status === 'success') {
-                // Mettre à jour l'état des activités seulement si la mise à jour de la base de données est réussie
                 const updatedActivities = activities.map(activity => {
                     if (activity.ID_ROOM_EVENT === activityId) {
                         return {
                             ...activity,
-                            NB_VACA: interestedActivities.includes(activityId) ? activity.NB_VACA - 1 : activity.NB_VACA + 1,
+                            NB_VACA: data.nbVacaJoin,
                         };
                     }
                     return activity;
@@ -134,7 +132,6 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
             }
         } catch (error) {
             console.error('Erreur lors de la mise à jour du nombre de votes: ', error);
-            console.error('Erreur lors de l\'analyse de la réponse JSON: ', error);
         }
     };
 
@@ -144,10 +141,10 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                 <TouchableOpacity style={styles.button} onPress={() => setIsModalVisible(true)}>
                     <Text style={styles.buttonText}>Proposer une activité</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setShowDatePicker(true)}> 
+                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                     <Text style={styles.datePickerText}>Choisir un jour</Text>
                 </TouchableOpacity>
-                {showDatePicker && ( 
+                {showDatePicker && (
                     <DateTimePicker
                         value={selectedDate}
                         mode="date"
@@ -156,26 +153,25 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                         onChange={onChangeDate}
                     />
                 )}
-                <Text style={styles.header}>Activités proposées le {selectedDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</Text>
+                <Text style={styles.header}>Activités du {selectedDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</Text>
                 {activities.map((activity, index) => (
                 <View key={index} style={styles.activityContainer}>
-                    {/* Conteneur pour chaque activité */}
-                    <View style={styles.activityContainer}>
-                        {/* Champ caché pour stocker l'ID de l'événement de la chambre */}
-                        <Text style={styles.hidden}>{activity.ID_ROOM_EVENT}</Text>
+                    <Text style={styles.activityText}>
+                        {activity.LIBELLE_EVENT_ROOM}
+                        {"\n"}Proposé par : {activity.NOM}
+                    </Text>
+                    <View style={styles.detailContainer}>
                         <Text style={styles.activityText}>
-                            {activity.LIBELLE_EVENT_ROOM} 
-                            {"\n"}Proposé par : {activity.NOM}
-                            {"\n"}Heure: {activity.HEURE}
-                            {"\n"}Nombre de personnes intéréssés : {activity.NB_VACA}
-                            {/* Affichage de l'icône et du compteur d'intérêt */}
+                            Heure: {activity.HEURE}
+                        </Text>
+                        <View style={styles.voteContainer}>
                             <TouchableOpacity onPress={() => handleInterest(activity.ID_ROOM_EVENT)}>
                                 <Image source={upvoteIcon} style={[styles.upvoteIcon, interestedActivities.includes(activity.ID_ROOM_EVENT) && styles.upvoteIconActive]} />
-                                <Text style={[styles.upvoteCount, interestedActivities.includes(activity.ID_ROOM_EVENT) && styles.upvoteCountActive]}>
-                                    {interestedActivities.includes(activity.ID_ROOM_EVENT) ? activity.NB_VACA + 1 : activity.NB_VACA}
-                                </Text>
                             </TouchableOpacity>
-                        </Text>
+                            <Text style={[styles.upvoteCount, interestedActivities.includes(activity.ID_ROOM_EVENT) && styles.upvoteCountActive]}>
+                                {interestedActivities.includes(activity.ID_ROOM_EVENT) ? activity.NB_VACA + 1 : activity.NB_VACA}
+                            </Text>
+                        </View>
                     </View>
                 </View>
             ))}
@@ -190,9 +186,9 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                         </View>
                     </View>
                 </Modal>
-                </ScrollView>
-            </ImageBackground>
-        );
-    };
+            </ScrollView>
+        </ImageBackground>
+    );
+};
 
 export default ActivityRoom;

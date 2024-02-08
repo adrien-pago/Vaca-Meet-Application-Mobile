@@ -10,9 +10,10 @@ if ($conn->connect_error) {
     exit;
 }
 
-// Récupérer les données envoyées par le frontend
-$idRoomEvent = isset($_POST['idRoomEvent']) ? $_POST['idRoomEvent'] : null;
-$action = isset($_POST['action']) ? $_POST['action'] : null; // 'upvote' ou 'downvote'
+$data = json_decode(file_get_contents('php://input'), true);
+
+$idRoomEvent = isset($data['idRoomEvent']) ? $data['idRoomEvent'] : null;
+$action = isset($data['action']) ? $data['action'] : null;
 
 // Validation des données
 if (empty($idRoomEvent) || empty($action)) {
@@ -39,8 +40,19 @@ $stmt->bind_param('i', $idRoomEvent);
 $stmt->execute();
 
 // Vérification du succès de la mise à jour
-if ($stmt->affected_rows > 0) {
-    echo json_encode(['status' => 'success', 'message' => 'Nombre de votes mis à jour avec succès']);
+if ($stmt->affected_rows >= 0) {
+    // Récupérer le nombre de votes mis à jour
+    $sql = "SELECT NB_VACA_JOIN FROM ROOM_EVENT WHERE ID_ROOM_EVENT = ?";
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param('i', $idRoomEvent);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    if ($row = $result->fetch_assoc()) {
+        $nbVacaJoin = $row['NB_VACA_JOIN'];
+        echo json_encode(['status' => 'success', 'message' => 'Nombre de votes mis à jour avec succès', 'nbVacaJoin' => $nbVacaJoin]);
+    } else {
+        echo json_encode(['status' => 'error', 'message' => 'Erreur lors de la récupération du nombre de votes']);
+    }
 } else {
     echo json_encode(['status' => 'error', 'message' => 'Aucune ligne mise à jour']);
 }
@@ -48,4 +60,4 @@ if ($stmt->affected_rows > 0) {
 // Fermeture de la connexion
 $stmt->close();
 $conn->close();
-?>
+

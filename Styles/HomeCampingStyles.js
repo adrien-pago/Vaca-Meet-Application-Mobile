@@ -22,9 +22,11 @@ export default StyleSheet.create({
         height: '100%',
     },
     text: {
+        textAlign: 'center',
         fontSize: 20,
-        marginBottom: 20,
-        color: '#000', 
+        marginVertical: 10,
+        color: 'black', 
+        fontWeight: 'bold',
     },
     button: {
         backgroundColor: '#6A5ACD', 
