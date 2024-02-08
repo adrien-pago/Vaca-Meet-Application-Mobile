@@ -1,63 +1,54 @@
 <?php
+header('Content-Type: application/json');
+
+// Se connecter à la base de données (Inclure les informations de connexion depuis le fichier de configuration)
 require_once 'config.php';
 
-header('Content-Type: application/json; charset=utf-8');
-
+// Se connecter à la base de données
 $conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
 
+// Vérifier la connexion
 if ($conn->connect_error) {
-    echo json_encode(['status' => 'error', 'message' => 'La connexion à la base de données a échoué']);
-    exit;
+    die(json_encode(['status' => 'error', 'message' => "La connexion à la base de données a échoué " . $conn->connect_error]));
 }
 
-$data = json_decode(file_get_contents('php://input'), true);
+$inputJSON = file_get_contents('php://input');
+$input = json_decode($inputJSON, TRUE);
 
-$idRoomEvent = isset($data['idRoomEvent']) ? $data['idRoomEvent'] : null;
-$action = isset($data['action']) ? $data['action'] : null;
+$userId = isset($input['userId']) ? $input['userId'] : null;
+$activityId = isset($input['activityId']) ? $input['activityId'] : null;
+$action = isset($input['action']) ? $input['action'] : null;
 
 // Validation des données
-if (empty($idRoomEvent) || empty($action)) {
+if (empty($userId) || empty($activityId) || empty($action)) {
     echo json_encode(['status' => 'error', 'message' => 'Paramètres manquants']);
     exit();
 }
 
-// Mettre à jour le nombre de votes en fonction de l'action de l'utilisateur
-if ($action === 'upvote') {
-    $sql = "UPDATE ROOM_EVENT SET NB_VACA_JOIN = NB_VACA_JOIN + 1 WHERE ID_ROOM_EVENT = ?";
-} elseif ($action === 'downvote') {
-    $sql = "UPDATE ROOM_EVENT SET NB_VACA_JOIN = NB_VACA_JOIN - 1 WHERE ID_ROOM_EVENT = ?";
+// Vérifier si l'utilisateur a déjà voté pour cette activité
+$stmt = $conn->prepare("SELECT * FROM VOTE_STATE WHERE ID_VACA = ? AND ID_ROOM_EVENT = ?");
+$stmt->bind_param("ii", $userId, $activityId);
+$stmt->execute();
+$result = $stmt->get_result();
+$hasVoted = $result->num_rows > 0;
+
+// Si l'utilisateur a déjà voté, effectuer une mise à jour, sinon insérer un nouvel enregistrement
+if ($hasVoted) {
+    $sql = "UPDATE VOTE_STATE SET VOTE_STATE = ? WHERE ID_VACA = ? AND ID_ROOM_EVENT = ?";
+} else {
+    $sql = "INSERT INTO VOTE_STATE (ID_VACA, ID_ROOM_EVENT, VOTE_STATE) VALUES (?, ?, ?)";
 }
 
-// Préparation de la requête
 $stmt = $conn->prepare($sql);
-if (!$stmt) {
-    echo json_encode(['status' => 'error', 'message' => 'Erreur de préparation de la requête']);
-    exit();
-}
-
-// Liaison des paramètres et exécution de la requête
-$stmt->bind_param('i', $idRoomEvent);
+$stmt->bind_param('iis', $userId, $activityId, $action);
 $stmt->execute();
 
-// Vérification du succès de la mise à jour
-if ($stmt->affected_rows >= 0) {
-    // Récupérer le nombre de votes mis à jour
-    $sql = "SELECT NB_VACA_JOIN FROM ROOM_EVENT WHERE ID_ROOM_EVENT = ?";
-    $stmt = $conn->prepare($sql);
-    $stmt->bind_param('i', $idRoomEvent);
-    $stmt->execute();
-    $result = $stmt->get_result();
-    if ($row = $result->fetch_assoc()) {
-        $nbVacaJoin = $row['NB_VACA_JOIN'];
-        echo json_encode(['status' => 'success', 'message' => 'Nombre de votes mis à jour avec succès', 'nbVacaJoin' => $nbVacaJoin]);
-    } else {
-        echo json_encode(['status' => 'error', 'message' => 'Erreur lors de la récupération du nombre de votes']);
-    }
+if ($stmt->affected_rows > 0) {
+    echo json_encode(['status' => 'success', 'message' => 'Opération réussie']);
 } else {
     echo json_encode(['status' => 'error', 'message' => 'Aucune ligne mise à jour']);
 }
 
-// Fermeture de la connexion
 $stmt->close();
 $conn->close();
 

@@ -109,24 +109,32 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    idRoomEvent: activityId,
+                    userId: userId,
+                    activityId: activityId,
                     action: interestedActivities.includes(activityId) ? 'downvote' : 'upvote',
                 }),
             });
-
+            
             const data = await response.json();
             if (data.status === 'success') {
+                // Mise à jour des données d'état des activités et des votes côté client
                 const updatedActivities = activities.map(activity => {
                     if (activity.ID_ROOM_EVENT === activityId) {
                         return {
                             ...activity,
+                            // Mettre à jour le nombre de votes en fonction de la réponse du serveur
                             NB_VACA: data.nbVacaJoin,
                         };
                     }
                     return activity;
                 });
+                // Mettre à jour les données d'état des activités
                 setActivities(updatedActivities);
-                setInterestedActivities(interestedActivities.includes(activityId) ? interestedActivities.filter(id => id !== activityId) : [...interestedActivities, activityId]);
+    
+                // Mettre à jour les données d'état des votes
+                setInterestedActivities(interestedActivities.includes(activityId) ? 
+                    interestedActivities.filter(id => id !== activityId) : 
+                    [...interestedActivities, activityId]);
             } else {
                 console.error("Erreur lors de la mise à jour du nombre de votes: ", data.message);
             }
