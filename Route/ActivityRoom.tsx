@@ -129,12 +129,6 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                 });
                 // Mettre à jour les données d'état des activités
                 setActivities(updatedActivities);
-    
-                // Mettre à jour les données d'état des votes
-                const updatedInterestedActivities = interestedActivities.includes(activityId) ? 
-                    interestedActivities.filter(id => id !== activityId) : 
-                    [...interestedActivities, activityId];
-                setInterestedActivities(updatedInterestedActivities);
             } else {
                 console.error("Erreur lors de la mise à jour du nombre de votes: ", data.message);
             }
@@ -142,7 +136,6 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
             console.error('Erreur lors de la mise à jour du nombre de votes: ', error);
         }
     };
-    
     
 
     return (
@@ -176,10 +169,10 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                         </Text>
                         <View style={styles.voteContainer}>
                             <TouchableOpacity onPress={() => handleInterest(activity.ID_ROOM_EVENT)}>
-                                <Image source={upvoteIcon} style={[styles.upvoteIcon, interestedActivities.includes(activity.ID_ROOM_EVENT) && styles.upvoteIconActive]} />
+                                <Image source={upvoteIcon} style={[styles.upvoteIcon]} />
                             </TouchableOpacity>
-                            <Text style={[styles.upvoteCount, interestedActivities.includes(activity.ID_ROOM_EVENT) && styles.upvoteCountActive]}>
-                                {interestedActivities.includes(activity.ID_ROOM_EVENT) ? activity.NB_VACA + 1 : activity.NB_VACA}
+                            <Text style={styles.upvoteCount}>
+                                {activity.NB_VACA}
                             </Text>
                         </View>
                     </View>

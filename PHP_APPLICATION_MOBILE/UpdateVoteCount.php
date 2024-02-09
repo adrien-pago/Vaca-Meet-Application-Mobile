@@ -28,7 +28,7 @@ $selectStmt->fetch();
 $selectStmt->close();
 
 
-if ($selectStmt->num_rows == 0) {
+if ($selectStmt->num_rows === 0) {
     // L'utilisateur n'a jamais voté, insérer un nouveau vote avec 'upvote'
     $insertStmt = $conn->prepare("INSERT INTO VOTE_STATE (ID_VACA, ID_ROOM_EVENT, VOTE_STATE) VALUES (?, ?, 'upvote')");
     $insertStmt->bind_param("ii", $userId, $activityId);
