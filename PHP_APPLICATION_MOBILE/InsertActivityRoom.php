@@ -16,7 +16,7 @@ $date = isset($_POST['date']) ? $_POST['date'] : null;
 $heure = isset($_POST['heure']) ? $_POST['heure'] : null;
 $libelle = isset($_POST['libelle']) ? $_POST['libelle'] : null; 
 
-$sql = "INSERT INTO ROOM_EVENT (ID_VACA_INIT, ID_CAMPING, DATE_EVENT_ROOM, HEURE, LIBELLE_EVENT_ROOM) VALUES (?, ?, ?, ?, ?)";
+$sql = "INSERT INTO ROOM_EVENT (ID_VACA_INIT, ID_CAMPING, DATE_EVENT_ROOM, HEURE, LIBELLE_EVENT_ROOM, NB_VACA_JOIN) VALUES (?, ?, ?, ?, ?,0)";
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {

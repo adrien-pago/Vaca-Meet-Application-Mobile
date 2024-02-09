@@ -111,7 +111,6 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                 body: JSON.stringify({
                     userId: userId,
                     activityId: activityId,
-                    action: interestedActivities.includes(activityId) ? 'downvote' : 'upvote',
                 }),
             });
             
@@ -132,9 +131,10 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                 setActivities(updatedActivities);
     
                 // Mettre à jour les données d'état des votes
-                setInterestedActivities(interestedActivities.includes(activityId) ? 
+                const updatedInterestedActivities = interestedActivities.includes(activityId) ? 
                     interestedActivities.filter(id => id !== activityId) : 
-                    [...interestedActivities, activityId]);
+                    [...interestedActivities, activityId];
+                setInterestedActivities(updatedInterestedActivities);
             } else {
                 console.error("Erreur lors de la mise à jour du nombre de votes: ", data.message);
             }
@@ -142,6 +142,8 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
             console.error('Erreur lors de la mise à jour du nombre de votes: ', error);
         }
     };
+    
+    
 
     return (
         <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
