@@ -3,51 +3,45 @@ require_once 'config.php';
 
 header('Content-Type: application/json; charset=utf-8');
 
-// Création de la connexion à la base de données
 $conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
 
-// Vérification de la connexion
 if ($conn->connect_error) {
     echo json_encode(['status' => 'error', 'message' => 'La connexion à la base de données a échoué']);
     exit(); 
 }
 
-// Récupération des paramètres GET et validation
 $idCamping = isset($_GET['idCamping']) ? (int)$_GET['idCamping'] : null;
 $dateStr = isset($_GET['date']) ? $_GET['date'] : null;
+$userId = isset($_GET['userId']) ? (int)$_GET['userId'] : null; 
 
-// Validation des entrées
-if (empty($idCamping) || empty($dateStr)) {
-    echo json_encode(['status' => 'error', 'message' => 'Paramètres idCamping ou date manquants ou invalides']);
+if (empty($idCamping) || empty($dateStr) || empty($userId)) { 
+    echo json_encode(['status' => 'error', 'message' => 'Paramètres manquants ou invalides']);
     exit();
 }
 
-// Préparation de la requête
-$query = "SELECT v.NOM, r.LIBELLE_EVENT_ROOM, r.DATE_EVENT_ROOM, r.HEURE, r.NB_VACA_JOIN, r.ID_ROOM_EVENT 
-FROM COMPTE_VACA_MEET v,  ROOM_EVENT r, CAMPING c 
-WHERE c.ID_CAMPING = ? AND c.ID_CAMPING = r.ID_CAMPING  AND v.ID_VACA = r.ID_VACA_INIT 
+$query = "SELECT v.NOM, r.LIBELLE_EVENT_ROOM, r.DATE_EVENT_ROOM, r.HEURE, r.NB_VACA_JOIN, r.ID_ROOM_EVENT, 
+(SELECT vs.VOTE_STATE FROM VOTE_STATE vs WHERE vs.ID_VACA = ? AND vs.ID_ROOM_EVENT = r.ID_ROOM_EVENT) AS STATU_VOTE
+FROM COMPTE_VACA_MEET v, ROOM_EVENT r, CAMPING c 
+WHERE c.ID_CAMPING = ? AND c.ID_CAMPING = r.ID_CAMPING AND v.ID_VACA = r.ID_VACA_INIT 
 AND DATE(r.DATE_EVENT_ROOM) = ?";
 
-// Exécution de la requête
 $stmt = $conn->prepare($query);
 if (!$stmt) {
     echo json_encode(['status' => 'error', 'message' => 'Erreur de préparation de la requête']);
     exit();
 }
 
-$stmt->bind_param('is', $idCamping, $dateStr);
+$stmt->bind_param('iis', $userId, $idCamping, $dateStr); 
 $stmt->execute();
 $result = $stmt->get_result();
 
-// Construction et envoi de la réponse JSON
 $activities = [];
-if ($result->num_rows > 0) {
-    while ($row = $result->fetch_assoc()) {
-        $activities[] = $row;
-    }
-    echo json_encode(['status' => 'success', 'data' => $activities]);
-} 
+while ($row = $result->fetch_assoc()) {
+    $row['STATU_VOTE'] = $row['STATU_VOTE'] ?? 'vide'; 
+    $activities[] = $row;
+}
 
-// Fermeture de la connexion
+echo json_encode(['status' => 'success', 'data' => $activities]);
+
 $conn->close();
-?>
+

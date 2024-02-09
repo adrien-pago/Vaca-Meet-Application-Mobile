@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Modal, TextInput, ImageBackground, Button, Image } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { RouteProp } from '@react-navigation/native';
+import { useFocusEffect } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 import styles from '../Styles/ActivityRoomStyles';
 
@@ -16,6 +17,7 @@ type ActivityEvent = {
     HEURE: string;
     DISPLAY_TIME?: string;
     ID_ROOM_EVENT: number;
+    STATUT_VOTE: string;
 };
 
 type ActivityRoomProps = {
@@ -31,21 +33,30 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
     const [formDate, setFormDate] = useState('');
     const [formHeure, setFormHeure] = useState('');
     const [formLibelle, setFormLibelle] = useState('');
-    const [interestedActivities, setInterestedActivities] = useState<number[]>([]);
 
     useEffect(() => {
+        console.log("Initial load or selectedDate changed");
         loadActivities(selectedDate);
     }, [selectedDate, idCamping]);
+
+    useFocusEffect(
+        React.useCallback(() => {
+            console.log("Screen focused, reloading activities");
+            loadActivities(selectedDate);
+        }, [selectedDate, idCamping])
+    );
 
     ///// Afficher les Activités Vacancier /////
     const loadActivities = async (date: Date) => {
         const dateStr = date.toISOString().split('T')[0];
+        console.log(`Loading activities for camping ${idCamping} on ${dateStr} for user ${userId}`);
         try {
-            const response = await fetch(`https://vaca-meet.fr/PHP_APPLICATION_MOBILE/LoadActivityRoom.php?idCamping=${idCamping}&date=${dateStr}`);
+            const response = await fetch(`https://vaca-meet.fr/PHP_APPLICATION_MOBILE/LoadActivityRoom.php?idCamping=${idCamping}&date=${dateStr}&userId=${userId}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
+            console.log("Activities loaded:", data);
             if (data.status === 'success') {
                 const formattedActivities: ActivityEvent[] = data.data.map((activity: ActivityEvent) => ({
                     ...activity,
@@ -56,7 +67,7 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                 console.error("Erreur dans la réponse du serveur: ", data.message);
             }
         } catch (error) {
-            //console.error("Erreur lors de la récupération des activités: ", error);
+            console.error("Erreur lors de la récupération des activités: ", error);
         }
     };
 
@@ -102,6 +113,7 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
 
     //// Variable d'état pour les vote intéréssé /////
     const handleInterest = async (activityId: number) => {
+        console.log(`Submitting vote for activity ${activityId} by user ${userId}`);
         try {
             const response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/UpdateVoteCount.php', {
                 method: 'POST',
@@ -113,21 +125,20 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                     activityId: activityId,
                 }),
             });
-            
             const data = await response.json();
+            console.log("Vote response:", data);
             if (data.status === 'success') {
-                // Mise à jour des données d'état des activités et des votes côté client
+                console.log(`Updating activity ${activityId}:`, data.data);
                 const updatedActivities = activities.map(activity => {
                     if (activity.ID_ROOM_EVENT === activityId) {
                         return {
                             ...activity,
-                            // Mettre à jour le nombre de votes en fonction de la réponse du serveur
-                            NB_VACA: data.nbVacaJoin,
+                            NB_VACA: data.data.NB_VACA_JOIN,
+                            STATUT_VOTE: data.data.STATUT_VOTE,
                         };
                     }
                     return activity;
                 });
-                // Mettre à jour les données d'état des activités
                 setActivities(updatedActivities);
             } else {
                 console.error("Erreur lors de la mise à jour du nombre de votes: ", data.message);
@@ -169,7 +180,7 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                         </Text>
                         <View style={styles.voteContainer}>
                             <TouchableOpacity onPress={() => handleInterest(activity.ID_ROOM_EVENT)}>
-                                <Image source={upvoteIcon} style={[styles.upvoteIcon]} />
+                            <Image source={upvoteIcon} style={[styles.upvoteIcon,activity.STATUT_VOTE === 'upvote' ? { tintColor: 'blue' } : {}]}/>
                             </TouchableOpacity>
                             <Text style={styles.upvoteCount}>
                                 {activity.NB_VACA}
