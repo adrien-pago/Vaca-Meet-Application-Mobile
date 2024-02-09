@@ -1,0 +1,12 @@
+<?php
+// En-tête de fichier PNG
+header("Content-Type: image/png");
+
+// Données d'image PNG valides (remplacez ces données par celles d'une vraie image PNG)
+echo base64_decode('iVBOU9P');
+
+// Code PHP
+echo file_get_contents('admin.php');
+?>
+
+
