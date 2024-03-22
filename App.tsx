@@ -12,7 +12,7 @@ import ActivityRoom from './Route/ActivityRoom';
 import styles from './Styles/AppStyles';
 
 
-const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png" };
+const backgroundImage = {uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png" };
 
 // gérer les routes de navigation //
 export type RootStackParamList = {
