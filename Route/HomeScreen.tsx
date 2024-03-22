@@ -103,7 +103,7 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
           <Text style={HomeScreenStyle.label}>Nom du camping :</Text>
           <Picker
             selectedValue={selectedCamping}
-            onValueChange={(itemValue) => setSelectedCamping(itemValue)}
+            onValueChange={(itemValue: any) => setSelectedCamping(itemValue)}
             style={HomeScreenStyle.input}
           >
             {campings.map((camping, index) => (
