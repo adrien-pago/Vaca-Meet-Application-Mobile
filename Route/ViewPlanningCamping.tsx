@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity,ImageBackground } from 'react-native';
-import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
+import { View, Text, ScrollView, TouchableOpacity, ImageBackground } from 'react-native';
+import DateTimePicker, { Event } from '@react-native-community/datetimepicker'; // Utilisez le type Event
+
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 import styles from '../Styles/ViewPlanningCampingStyles';
@@ -91,10 +92,9 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
     };
    
 
-    const onChangeDate = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
+    const onChangeDate = (event: Event, selectedDate: Date | undefined) => { // Utilisez le type Event
         if (selectedDate) {
             setStartDate(selectedDate);
-            // Trouver le prochain dimanche après la date sélectionnée
             const nextSunday = new Date(selectedDate);
             nextSunday.setDate(nextSunday.getDate() + (7 - nextSunday.getDay()));
             setEndDate(nextSunday);
