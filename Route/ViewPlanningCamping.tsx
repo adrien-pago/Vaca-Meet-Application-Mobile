@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ImageBackground } from 'react-native';
-import DateTimePicker, { Event } from '@react-native-community/datetimepicker'; // Utilisez le type Event
+import DateTimePicker, { Event } from '@react-native-community/datetimepicker'; // type Event
 
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
