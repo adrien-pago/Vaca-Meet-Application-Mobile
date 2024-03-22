@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ImageBackground } from 'react-native';
-import DateTimePicker, { Event } from '@react-native-community/datetimepicker'; // type Event
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker'; // Utilisez DateTimePickerEvent
+
 
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
@@ -92,7 +93,7 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
     };
    
 
-    const onChangeDate = (event: Event, selectedDate: Date | undefined) => { // Utilisez le type Event
+    const onChangeDate = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
         if (selectedDate) {
             setStartDate(selectedDate);
             const nextSunday = new Date(selectedDate);

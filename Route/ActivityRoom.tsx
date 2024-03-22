@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, Modal, TextInput, ImageBackground, Button, Image } from 'react-native';
-import DateTimePicker, { Event } from '@react-native-community/datetimepicker'; // type Event
+import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker'; // Utilisez DateTimePickerEvent
 import { RouteProp } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
@@ -72,7 +72,7 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
     };
 
     /// modifier la date de recherche d'activité ////
-    const onChangeDate = (event: Event, selectedDate: Date | undefined) => { // Utilisez le type Event
+    const onChangeDate = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
         if (selectedDate) {
             setSelectedDate(new Date(selectedDate.setHours(0, 0, 0, 0)));
             setShowDatePicker(false);
