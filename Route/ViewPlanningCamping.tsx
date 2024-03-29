@@ -2,7 +2,6 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, ScrollView, TouchableOpacity, ImageBackground } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker'; // Utilisez DateTimePickerEvent
 
-
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 import styles from '../Styles/ViewPlanningCampingStyles';
@@ -49,6 +48,7 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
     
         try {
             const response = await fetch(`https://vaca-meet.fr/PHP_APPLICATION_MOBILE/LoadPlanningCamping.php?dateDebut=${startDateStr}&dateFin=${endDateStr}`);
+            console.log(`Loading plannig for camping du ${startDateStr} au ${endDateStr} `);
     
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);

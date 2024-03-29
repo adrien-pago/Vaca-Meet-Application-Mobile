@@ -74,17 +74,23 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
     /// modifier la date de recherche d'activité ////
     const onChangeDate = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
         if (selectedDate) {
-            setSelectedDate(new Date(selectedDate.setHours(0, 0, 0, 0)));
+            setSelectedDate(selectedDate);
+            const adjustedDate = new Date(selectedDate.getFullYear(), selectedDate.getMonth(), selectedDate.getDate());
+            console.log("New date selected:", selectedDate);
             setShowDatePicker(false);
+        } else {
+            console.log("No new date selected");
         }
     };
-
+ 
+    
     /// Variable formulaire  + insert en base ///
     const handleAddActivity = async () => {
         if (!formDate || !formHeure || !formLibelle) {
             alert('Veuillez remplir tous les champs.');
             return;
         }
+        console.log("Adding new activity...");
         const formData = new FormData();
         formData.append('id_vaca_init', `${userId}`);
         formData.append('id_camping', `${idCamping}`);

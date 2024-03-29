@@ -14,6 +14,7 @@ $idCamping = isset($_GET['idCamping']) ? (int)$_GET['idCamping'] : null;
 $dateStr = isset($_GET['date']) ? $_GET['date'] : null;
 $userId = isset($_GET['userId']) ? (int)$_GET['userId'] : null; 
 
+
 if (empty($idCamping) || empty($dateStr) || empty($userId)) { 
     echo json_encode(['status' => 'error', 'message' => 'Paramètres manquants ou invalides']);
     exit();
@@ -24,6 +25,7 @@ $query = "SELECT v.NOM, r.LIBELLE_EVENT_ROOM, r.DATE_EVENT_ROOM, r.HEURE, r.NB_V
 FROM COMPTE_VACA_MEET v, ROOM_EVENT r, CAMPING c 
 WHERE c.ID_CAMPING = ? AND c.ID_CAMPING = r.ID_CAMPING AND v.ID_VACA = r.ID_VACA_INIT 
 AND DATE(r.DATE_EVENT_ROOM) = ?";
+
 
 $stmt = $conn->prepare($query);
 if (!$stmt) {
