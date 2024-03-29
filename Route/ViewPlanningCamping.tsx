@@ -42,13 +42,14 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
         }
     }, [showDatePicker]);
 
+    // Aficher planning du camping
     const loadPlanning = async (start: Date, end: Date) => {
         const startDateStr = start.toISOString().split('T')[0];
         const endDateStr = end.toISOString().split('T')[0];
     
         try {
             const response = await fetch(`https://vaca-meet.fr/PHP_APPLICATION_MOBILE/LoadPlanningCamping.php?dateDebut=${startDateStr}&dateFin=${endDateStr}`);
-            console.log(`Loading plannig for camping du ${startDateStr} au ${endDateStr} `);
+            
     
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
@@ -67,6 +68,7 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
         }
     };
 
+    // Construire le planning
     const transformDataToPlanningStructure = (data: PlanningEvent[]) => {
         const structuredData: PlanningData = {};
         data.forEach((event) => {
@@ -89,10 +91,15 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
             });
         });
 
+        // Tri des événements par date
+        Object.keys(structuredData).forEach((key) => {
+            structuredData[key].sort((a, b) => new Date(a.DATE_HEURE_DEBUT).getTime() - new Date(b.DATE_HEURE_DEBUT).getTime());
+        });
+
         return structuredData;
     };
    
-
+    // Slection new date
     const onChangeDate = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
         if (selectedDate) {
             setStartDate(selectedDate);
