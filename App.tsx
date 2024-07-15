@@ -39,7 +39,7 @@ function LoginScreen({ navigation }: LoginScreenProps) {
       return;
     }
     try {
-      let response = await fetch('PHP_APPLICATION_MOBILE/login_vaca_meet.php', {
+      let response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/login_vaca_meet.php', {
         method: 'POST',
         headers: {
           Accept: 'application/json',

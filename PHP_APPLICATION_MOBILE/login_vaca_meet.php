@@ -21,21 +21,16 @@ if (!$nom || !$password) {
 
 $sql = "SELECT * FROM COMPTE_VACA_MEET WHERE nom = ?";
 $stmt = $conn->prepare($sql);
-if (!$stmt) {
-    echo json_encode(['status' => 'error', 'message' => 'Erreur de préparation de la requête : ' . $conn->error]);
-    exit();
-}
-
 $stmt->bind_param("s", $nom);
 $stmt->execute();
-
 $result = $stmt->get_result();
+
 if ($result->num_rows == 1) {
     $row = $result->fetch_assoc();
-    if (password_verify($password, $row['mdp'])) {
+    if (password_verify($password, $row['mdpVaca'])) {
         if ($row['isVerified'] == 1) {
-            $_SESSION['nom'] = $row['nom'];  // Stockez le nom de l'utilisateur
-            echo json_encode(['status' => 'success', 'message' => 'Vous êtes connecté avec succès.', 'id' => $row['ID']]);
+            $_SESSION['nom'] = $row['nom'];  
+            echo json_encode(['status' => 'success', 'message' => 'Vous êtes connecté avec succès.', 'id' => $row['idCompteVaca']]);
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Votre compte n\'a pas encore été confirmé. Veuillez vérifier votre boîte e-mail.']);
         }
@@ -45,7 +40,6 @@ if ($result->num_rows == 1) {
 } else {
     echo json_encode(['status' => 'error', 'message' => 'Le nom d\'utilisateur est incorrect.']);
 }
-
 
 $stmt->close();
 $conn->close();
