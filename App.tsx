@@ -1,18 +1,12 @@
-////////////////////////// Imports Nécessaires ////////////////////////////////
 import React, { useState } from 'react';
-import { Modal, View, TextInput, TouchableOpacity, Alert, Text, ImageBackground } from 'react-native';
+import { Modal, View, TextInput, TouchableOpacity, Alert, Text } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator, NativeStackNavigationProp } from '@react-navigation/native-stack';
 import HomeScreen from './Route/HomeScreen';
 import HomeCamping from './Route/HomeCamping';
 import ViewPlanningCamping from './Route/ViewPlanningCamping';
 import ActivityRoom from './Route/ActivityRoom';
-
-//import ActivityRoom from './Route/ActivityRoom';
 import styles from './Styles/AppStyles';
-
-
-const backgroundImage = {uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png" };
 
 // gérer les routes de navigation //
 export type RootStackParamList = {
@@ -45,7 +39,7 @@ function LoginScreen({ navigation }: LoginScreenProps) {
       return;
     }
     try {
-      let response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/login_vaca_meet.php', {
+      let response = await fetch('PHP_APPLICATION_MOBILE/login_vaca_meet.php', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -102,7 +96,7 @@ function LoginScreen({ navigation }: LoginScreenProps) {
   };
 
   return (
-    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
+    <View style={styles.background}>
       <View style={styles.container}>
         <View style={styles.loginBox}>
           <Text style={styles.title}>Vaca Meet</Text>
@@ -133,7 +127,7 @@ function LoginScreen({ navigation }: LoginScreenProps) {
           </View>
         </Modal>
       </View>
-    </ImageBackground>
+    </View>
   );
 }
 
@@ -144,7 +138,7 @@ export default function App() {
       <Stack.Navigator>
         <Stack.Screen name="Login" component={LoginScreen} options={{ headerShown: false }} />
         <Stack.Screen name="HomeScreen" component={HomeScreen} initialParams={{ userId: 0, userName: '' }} />
-        <Stack.Screen name="HomeCamping" component={HomeCamping} initialParams={{ campingName: '', idCamping: 0, userId: 0, userName:''}}/>
+        <Stack.Screen name="HomeCamping" component={HomeCamping} initialParams={{ campingName: '', idCamping: 0, userId: 0, userName:'' }}/>
         <Stack.Screen name="ViewPlanningCamping" component={ViewPlanningCamping} />
         <Stack.Screen name="ActivityRoom" component={ActivityRoom} />
       </Stack.Navigator>

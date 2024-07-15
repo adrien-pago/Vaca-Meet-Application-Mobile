@@ -1,87 +1,85 @@
 import { StyleSheet } from 'react-native';
 
 export default StyleSheet.create({
-  backgroundImage: {
+  background: {
     flex: 1,
-    resizeMode: 'cover',
+    backgroundColor: '#f0f4f8', // Bleu nuage clair
   },
-
   container: {
     flex: 1,
     alignItems: 'center',
     justifyContent: 'center',
     padding: 20,
   },
-
   title: {
     fontSize: 32,
     fontWeight: 'bold',
-    color: 'white',
+    color: '#1e3a8a', // Bleu foncé
     marginBottom: 30,
     textShadowColor: 'rgba(0, 0, 0, 0.75)',
     textShadowOffset: { width: -1, height: 1 },
     textShadowRadius: 10,
   },
-
   buttonContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    width: '80%', // La même largeur que les champs pour aligner les bords
+    width: '100%',
+    marginTop: 20,
   },
-
   button: {
-    backgroundColor: '#90E',  // Viollet
-    paddingVertical: 10,
-    paddingHorizontal: 10,
-    borderRadius: 5,
-    margin: 5,
-    flexGrow: 1, // Permet aux boutons de se développer et de remplir l'espace disponible
+    backgroundColor: '#3b82f6', // Bleu moyen
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginVertical: 5, // Espacement vertical entre les boutons
+    width: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
   },
-  
   buttonText: {
-    color: 'white',
+    color: '#ffffff',
     textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '600',
   },
-
-  buttonSpacer: {
-    width: 20, // Espace entre les boutons
-  },
-
   input: {
-    height: 50, // Définissez la hauteur ici pour la rendre identique à celle des boutons
+    height: 50,
     margin: 12,
     borderWidth: 1,
     padding: 10,
-    width: '80%', 
-    backgroundColor: 'white',
+    width: '100%',
+    backgroundColor: '#ffffff',
+    borderColor: '#d1d5db', // Gris clair
     borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
   },
-
   centeredView: {
     flex: 1,
     justifyContent: "center",
     alignItems: "center",
     marginTop: 22,
   },
-
   modalView: {
     margin: 20,
-    backgroundColor: "white",
+    backgroundColor: "#d1d5db",
     borderRadius: 20,
     padding: 35,
     alignItems: "center",
     shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: 2
+      height: 2,
     },
     shadowOpacity: 0.25,
     shadowRadius: 4,
     elevation: 5,
     width: '90%',
   },
-
   closeButton: {
     position: 'absolute',
     top: 10,
@@ -90,16 +88,14 @@ export default StyleSheet.create({
     borderRadius: 15,
     padding: 5,
   },
-
   textStyle: {
-    color: "white",
+    color: "#ffffff",
     fontWeight: "bold",
     textAlign: "center",
   },
-
   loginBox: {
-    backgroundColor: 'rgba(255, 255, 255, 0.8)',
-    borderRadius: 10,
+    backgroundColor: '#ffffff',
+    borderRadius: 20,
     padding: 20,
     alignItems: 'center',
     width: '80%',
