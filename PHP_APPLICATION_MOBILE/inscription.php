@@ -81,7 +81,7 @@ try {
 }
 
 // Insérer le nouvel utilisateur
-$stmt = $conn->prepare("INSERT INTO COMPTE_VACA_MEET (NOM, MDP, EMAIL, TOKEN_COMPTE) VALUES (?, ?, ?, ?)");
+$stmt = $conn->prepare("INSERT INTO COMPTE_VACA_MEET (nom, mdp, email, tokenCompte) VALUES (?, ?, ?, ?)");
 if ($stmt === false) {
     echo json_encode(['status' => 'error', 'message' => "Erreur de préparation arf" . $conn->error]);
     exit();
