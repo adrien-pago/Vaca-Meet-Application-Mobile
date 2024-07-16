@@ -1,7 +1,7 @@
 <?php
-$servername = "212.227.47.132";// IP du VPS
+$servername = "localhost";
 $dbusername = "vaca_meet";
-$dbpassword = "#6vLo85l5";
+$dbpassword = "A?n5wj399";
 $dbname = "Vaca_Meet";
 
 ?>
