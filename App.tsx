@@ -39,7 +39,8 @@ function LoginScreen({ navigation }: LoginScreenProps) {
       return;
     }
     try {
-      let response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/login_vaca_meet.php', {
+      console.log("Envoi de la requête à l'API avec les données:", { nom, password });
+      let response = await fetch('https://adrien-pago-portfolio.fr/PHP_APPLICATION_MOBILE/login_vaca_meet.php', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
@@ -50,7 +51,9 @@ function LoginScreen({ navigation }: LoginScreenProps) {
           password: password,
         })
       });
+      console.log("Réponse reçue de l'API:", response);
       let json = await response.json();
+      console.log("JSON reçu:", json);
       Alert.alert("Réponse du serveur:", json.message);
       if (json.status === 'success') {
         navigation.navigate('HomeScreen', { userId: 1, userName: nom }); //envoyer vers la page HomeScreen.tsx
@@ -58,10 +61,16 @@ function LoginScreen({ navigation }: LoginScreenProps) {
         Alert.alert("Erreur", json.message || "Une erreur est survenue lors de la connexion.");
       }
     } catch (error) {
-      console.error(error);
-      Alert.alert("Erreur réseau", "Impossible de se connecter au serveur.");
+      console.error('Erreur réseau:', error);
+      if (error instanceof Error) {
+        Alert.alert("Erreur réseau", `Impossible de se connecter au serveur: ${error.message}`);
+      } else {
+        Alert.alert("Erreur réseau", "Impossible de se connecter au serveur. ");
+      }
     }
   };
+  
+  
 
   ////////////////////////// Fonction d'inscription ////////////////////////////////
   const handleSignUp = async () => {
@@ -70,7 +79,7 @@ function LoginScreen({ navigation }: LoginScreenProps) {
       return;
     }
     try {
-      let response = await fetch('PHP_APPLICATION_MOBILE/inscription.php', {
+      let response = await fetch('https://adrien-pago-portfolio.fr/PHP_APPLICATION_MOBILE/login_vaca_meet.php', {
         method: 'POST',
         headers: {
           Accept: 'application/json',

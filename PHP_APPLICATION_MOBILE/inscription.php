@@ -23,7 +23,7 @@ $password = $data['password'] ?? null;
 
 // Vérifier que les données nécessaires sont présentes
 if (!$pseudo || !$email || !$password) {
-    echo json_encode(['status' => 'error', 'message' => 'Informations manquantes']);
+    echo json_encode(['status' => 'error', 'message' => 'Informations manquantes !!']);
     exit();
 }
 
@@ -34,7 +34,7 @@ $hashed_password = password_hash($password, PASSWORD_BCRYPT);
 $token = bin2hex(random_bytes(32));
 
 // Vérifiez si l'email existe déjà
-$stmt = $conn->prepare("SELECT * FROM COMPTE_VACA_MEET WHERE EMAIL = ?");
+$stmt = $conn->prepare("SELECT * FROM COMPTE_VACA_MEET WHERE email = ?");
 $stmt->bind_param("s", $email);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -46,7 +46,7 @@ if ($result->num_rows > 0) {
 }
 
 //Lien de confirmation
-$base_url = "http://vaca-meet.fr"; // votre domaine actuel.
+$base_url = "https://adrien-pago-portfolio.fr/"; // votre domaine actuel.
 $confirmation_link = $base_url . '/PHP_APPLICATION_MOBILE/confirm_Token.php?token=' . $token;
 
 // Envoyer un e-mail de confirmation
@@ -81,7 +81,7 @@ try {
 }
 
 // Insérer le nouvel utilisateur
-$stmt = $conn->prepare("INSERT INTO COMPTE_VACA_MEET (nom, mdp, email, tokenCompte) VALUES (?, ?, ?, ?)");
+$stmt = $conn->prepare("INSERT INTO COMPTE_VACA_MEET (nom, mdpVaca, email, tokenCompte) VALUES (?, ?, ?, ?)");
 if ($stmt === false) {
     echo json_encode(['status' => 'error', 'message' => "Erreur de préparation arf" . $conn->error]);
     exit();
