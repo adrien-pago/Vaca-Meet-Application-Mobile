@@ -79,7 +79,7 @@ function LoginScreen({ navigation }: LoginScreenProps) {
       return;
     }
     try {
-      let response = await fetch('https://adrien-pago-portfolio.fr/PHP_APPLICATION_MOBILE/login_vaca_meet.php', {
+      let response = await fetch('https://adrien-pago-portfolio.fr/PHP_APPLICATION_MOBILE/inscription.php', {
         method: 'POST',
         headers: {
           Accept: 'application/json',

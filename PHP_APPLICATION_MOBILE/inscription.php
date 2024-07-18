@@ -57,8 +57,8 @@ try {
     $mail->isSMTP();                                     
     $mail->Host = 'smtp.ionos.fr';                      
     $mail->SMTPAuth = true;                              
-    $mail->Username = 'adrien-pago@vaca-meet.fr'; 
-    $mail->Password = 'RG3SrzY7PhvnWQh';              
+    $mail->Username = 'support-technique@vaca-meet.fr'; 
+    $mail->Password = 'Support-AntiHackMessagerie489?';              
     $mail->SMTPSecure = 'tls';                           
     $mail->Port = 587;
 
