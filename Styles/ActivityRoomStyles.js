@@ -5,6 +5,23 @@ const styles = StyleSheet.create({
         flex: 1,
         resizeMode: 'cover',
     },
+    title: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#1e3a8a', // Bleu foncé
+        marginBottom: 10,
+        textShadowColor: 'rgba(0, 0, 0, 0.75)',
+        textShadowOffset: { width: -1, height: 1 },
+        textShadowRadius: 10,
+      },
+      title1 :{
+        fontSize: 15,
+        color: 'black', // Bleu foncé
+        marginBottom: 10,
+        textShadowColor: 'rgba(0, 0, 0, 0.75)',
+        textShadowOffset: { width: -1, height: 1 },
+        textShadowRadius: 10,
+      },
 
     container: {
         flex: 1,

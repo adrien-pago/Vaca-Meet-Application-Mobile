@@ -12,20 +12,18 @@ if ($conn->connect_error) {
 
 $idCamping = isset($_GET['idCamping']) ? (int)$_GET['idCamping'] : null;
 $dateStr = isset($_GET['date']) ? $_GET['date'] : null;
-$userId = isset($_GET['userId']) ? (int)$_GET['userId'] : null; 
+$userId = isset($_GET['userId']) ? (int)$_GET['userId'] : null;
 
-
-if (empty($idCamping) || empty($dateStr) || empty($userId)) { 
+if (empty($idCamping) || empty($dateStr) || empty($userId)){ 
     echo json_encode(['status' => 'error', 'message' => 'Paramètres manquants ou invalides']);
     exit();
 }
 
-$query = "SELECT v.NOM, r.LIBELLE_EVENT_ROOM, r.DATE_EVENT_ROOM, r.HEURE, r.NB_VACA_JOIN, r.ID_ROOM_EVENT, 
-(SELECT vs.VOTE_STATE FROM VOTE_STATE vs WHERE vs.ID_VACA = ? AND vs.ID_ROOM_EVENT = r.ID_ROOM_EVENT) AS STATU_VOTE
-FROM COMPTE_VACA_MEET v, ROOM_EVENT r, CAMPING c 
-WHERE c.ID_CAMPING = ? AND c.ID_CAMPING = r.ID_CAMPING AND v.ID_VACA = r.ID_VACA_INIT 
-AND DATE(r.DATE_EVENT_ROOM) = ?";
-
+$query = "SELECT v.nom, r.libelle as LIBELLE_EVENT_ROOM, r.date_time_event as DATE_TIME_EVENT, r.nb_vaca as NB_VACA, r.id_room_event as ID_ROOM_EVENT, 
+          CASE WHEN (SELECT COUNT(*) FROM ROOM_EVENT_PARTICIPANTS WHERE id_vaca = ? AND id_room_event = r.id_room_event) > 0 THEN 'upvote' ELSE 'none' END AS STATUT_VOTE 
+          FROM COMPTE_VACA_MEET v, ROOM_EVENT r, CAMPING c 
+          WHERE c.id_camping = ? AND c.id_camping = r.id_camping AND v.idCompteVaca = r.id_compte_vaca 
+          AND DATE(r.date_time_event) = ?";
 
 $stmt = $conn->prepare($query);
 if (!$stmt) {
@@ -39,11 +37,11 @@ $result = $stmt->get_result();
 
 $activities = [];
 while ($row = $result->fetch_assoc()) {
-    $row['STATU_VOTE'] = $row['STATU_VOTE'] ?? 'vide'; 
+    $row['DATE_TIME_EVENT'] = date('Y-m-d H:i:s', strtotime($row['DATE_TIME_EVENT']));
     $activities[] = $row;
 }
 
 echo json_encode(['status' => 'success', 'data' => $activities]);
 
+$stmt->close();
 $conn->close();
-

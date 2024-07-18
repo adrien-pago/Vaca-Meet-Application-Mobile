@@ -14,7 +14,6 @@ type ActivityEvent = {
     NOM: string;
     NB_VACA: number;
     DATE_TIME_EVENT: Date;
-    DISPLAY_TIME?: string;
     ID_ROOM_EVENT: number;
     STATUT_VOTE: string;
 };
@@ -47,7 +46,7 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
     const loadActivities = async (date: Date) => {
         const dateStr = date.toISOString().split('T')[0];
         try {
-            const response = await fetch(`https://vaca-meet.fr/PHP_APPLICATION_MOBILE/LoadActivityRoom.php?idCamping=${idCamping}&date=${dateStr}&userId=${userId}`);
+            const response = await fetch(`https://adrien-pago-portfolio.fr/PHP_APPLICATION_MOBILE/LoadActivityRoom.php?idCamping=${idCamping}&date=${dateStr}&userId=${userId}`);
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -152,59 +151,59 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                 <TouchableOpacity style={styles.button} onPress={() => setIsModalVisible(true)}>
                     <Text style={styles.buttonText}>Proposer une activité</Text>
                 </TouchableOpacity>
-                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                    <Text style={styles.datePickerText}>Choisir une date</Text>
-                </TouchableOpacity>
-                {showDatePicker && (
-                    <DateTimePicker
-                        value={selectedDate}
-                        mode="date"
-                        is24Hour={true}
-                        display="default"
-                        onChange={onChangeDate}
-                    />
-                )}
-                <TouchableOpacity onPress={() => setShowTimePicker(true)}>
-                    <Text style={styles.datePickerText}>Choisir une heure</Text>
-                </TouchableOpacity>
-                {showTimePicker && (
-                    <DateTimePicker
-                        value={selectedTime}
-                        mode="time"
-                        is24Hour={true}
-                        display="default"
-                        onChange={onChangeTime}
-                    />
-                )}
                 <Text style={styles.header}>Activités du {selectedDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</Text>
                 {activities.map((activity, index) => (
                     <View key={index} style={styles.activityContainer}>
                         <Text style={styles.activityText}>
                             {activity.LIBELLE_EVENT_ROOM}
                             {"\n"}Proposé par : {activity.NOM}
+                            {"\n"}Date et Heure : {activity.DATE_TIME_EVENT.toLocaleString('fr-FR')}
                         </Text>
                         <View style={styles.detailContainer}>
-                            <Text style={styles.activityText}>
-                                Heure: {activity.DATE_TIME_EVENT.toLocaleTimeString('fr-FR', { hour: '2-digit', minute: '2-digit' })}
-                            </Text>
-                            <View style={styles.voteContainer}>
-                                <TouchableOpacity onPress={() => handleInterest(activity.ID_ROOM_EVENT)}>
-                                    <Image source={upvoteIcon} style={[styles.upvoteIcon, activity.STATUT_VOTE === 'upvote' ? { tintColor: 'blue' } : {}]} />
-                                </TouchableOpacity>
-                                <Text style={styles.upvoteCount}>
-                                    {activity.NB_VACA}
+                            <TouchableOpacity onPress={() => handleInterest(activity.ID_ROOM_EVENT)}>
+                                <Text style={styles.buttonText}>
+                                    {activity.STATUT_VOTE === 'upvote' ? 'Je ne veux plus participer' : 'Je veux participer'}
                                 </Text>
-                            </View>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 ))}
                 <Modal visible={isModalVisible} animationType="slide" transparent={true}>
                     <View style={styles.modalView}>
                         <TextInput style={styles.input} placeholder="Libelle" onChangeText={setFormLibelle} value={formLibelle} maxLength={250} />
-                        <TextInput style={styles.input} placeholder="Date et Heure (YYYY-MM-DD HH:MM)" onChangeText={setFormDateTime} value={formDateTime} />
+                        <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                            <Text style={styles.datePickerText}>Choisir une date</Text>
+                        </TouchableOpacity>
+                        {showDatePicker && (
+                            <DateTimePicker
+                                value={selectedDate}
+                                mode="date"
+                                is24Hour={true}
+                                display="default"
+                                onChange={onChangeDate}
+                            />
+                        )}
+                        <TouchableOpacity onPress={() => setShowTimePicker(true)}>
+                            <Text style={styles.datePickerText}>Choisir une heure</Text>
+                        </TouchableOpacity>
+                        {showTimePicker && (
+                            <DateTimePicker
+                                value={selectedTime}
+                                mode="time"
+                                is24Hour={true}
+                                display="default"
+                                onChange={onChangeTime}
+                            />
+                        )}
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Date et Heure (YYYY-MM-DD HH:MM)"
+                            value={formDateTime}
+                            editable={false}
+                        />
                         <View style={styles.buttonContainer}>
+                            <Button title="Valider" onPress={handleAddActivity} />
                             <Button title="Annuler" onPress={() => setIsModalVisible(false)} />
-                            <Button title="Ajouter" onPress={handleAddActivity} />
                         </View>
                     </View>
                 </Modal>

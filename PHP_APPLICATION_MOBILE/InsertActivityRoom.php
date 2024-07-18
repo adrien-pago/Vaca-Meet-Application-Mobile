@@ -15,7 +15,7 @@ $idCamping = isset($_POST['id_camping']) ? (int)$_POST['id_camping'] : null;
 $date_time_event = isset($_POST['date_time_event']) ? $_POST['date_time_event'] : null;
 $libelle = isset($_POST['libelle']) ? $_POST['libelle'] : null; 
 
-$sql = "INSERT INTO ROOM_EVENT (id_compte_vaca, id_camping, date_time_event, libelle, nb_vaca) VALUES (?, ?, ?, ?, 0)";
+$sql = "INSERT INTO ROOM_EVENT (id_compte_vaca, id_camping, date_time_event, libelle, nb_vaca) VALUES (?, ?, ?, ?, 1)";
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
