@@ -12,11 +12,10 @@ if ($conn->connect_error) {
 
 $idVacaInit = isset($_POST['id_vaca_init']) ? (int)$_POST['id_vaca_init'] : null;
 $idCamping = isset($_POST['id_camping']) ? (int)$_POST['id_camping'] : null;
-$date = isset($_POST['date']) ? $_POST['date'] : null;
-$heure = isset($_POST['heure']) ? $_POST['heure'] : null;
+$date_time_event = isset($_POST['date_time_event']) ? $_POST['date_time_event'] : null;
 $libelle = isset($_POST['libelle']) ? $_POST['libelle'] : null; 
 
-$sql = "INSERT INTO ROOM_EVENT (ID_VACA_INIT, ID_CAMPING, DATE_EVENT_ROOM, HEURE, LIBELLE_EVENT_ROOM, NB_VACA_JOIN) VALUES (?, ?, ?, ?, ?,0)";
+$sql = "INSERT INTO ROOM_EVENT (id_compte_vaca, id_camping, date_time_event, libelle, nb_vaca) VALUES (?, ?, ?, ?, 0)";
 
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
@@ -24,8 +23,7 @@ if (!$stmt) {
     exit;
 }
 
-// Ajustez les variables à lier en fonction de la requête corrigée
-$stmt->bind_param("iisss", $idVacaInit, $idCamping, $date, $heure, $libelle);
+$stmt->bind_param("iiss", $idVacaInit, $idCamping, $date_time_event, $libelle);
 
 if ($stmt->execute()) {
     echo json_encode(['status' => 'success', 'message' => 'Activité ajoutée avec succès']);
@@ -35,3 +33,4 @@ if ($stmt->execute()) {
 
 $stmt->close();
 $conn->close();
+?>

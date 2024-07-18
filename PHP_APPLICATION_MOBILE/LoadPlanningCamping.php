@@ -11,14 +11,15 @@ if ($conn->connect_error) {
 
 $dateDebut = $_GET['dateDebut'] ?? null;
 $dateFin = $_GET['dateFin'] ?? null;
+$idCamping = $_GET['idCamping'] ?? null; // Nouveau paramètre idCamping
 
 if (!$dateDebut || !$dateFin) {
     echo json_encode(['status' => 'error', 'message' => 'Dates manquantes']);
     exit();
 }
 
-$sql = "SELECT e.LIB_ACTIVITE, e.DATE_HEURE_DEBUT, e.DATE_HEURE_FIN, s.LIBELLE_STRUCTURE FROM EVENEMENT e, STRUCTURE s
-WHERE e.ID_STRUCTURE = s.ID_STRUCTURE AND e.DATE_HEURE_DEBUT BETWEEN '$dateDebut 00:00:00' AND '$dateFin 23:59:59' ORDER BY e.DATE_HEURE_DEBUT";
+$sql = "SELECT libelle_activity, date_debut, date_fin FROM PLANNING 
+WHERE idCamping = $idCamping  AND date_debut BETWEEN '$dateDebut 00:00:00' AND '$dateFin 23:59:59' ORDER BY date_fin";
 $result = $conn->query($sql);
 
 if (!$result) {
@@ -33,7 +34,6 @@ while($row = $result->fetch_assoc()) {
         'LIB_ACTIVITE' => $row['LIB_ACTIVITE'],
         'DATE_HEURE_DEBUT' => $row['DATE_HEURE_DEBUT'],
         'DATE_HEURE_FIN' => $row['DATE_HEURE_FIN'],
-        'LIBELLE_STRUCTURE' => $row['LIBELLE_STRUCTURE'] 
     );
 }
 
