@@ -60,7 +60,7 @@ try {
     $mail->Username = 'support-technique@vaca-meet.fr'; 
     $mail->Password = 'Support-AntiHackMessagerie489?';              
     $mail->SMTPSecure = 'tls';                           
-    $mail->Port = 587;
+    $mail->Port = 465;
 
     // Configurer les paramètres de l'e-mail
     $mail->setFrom('adrien-pago@vaca-meet.fr', 'Support Technique');
