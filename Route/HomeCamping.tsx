@@ -17,7 +17,6 @@ type HomeCampingProps = {
   };
 };
 
-const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png" };
 const defaultProfilePic = require('../ASSET/profil.jpg');
 
 function HomeCamping({ route }: HomeCampingProps) {
@@ -30,7 +29,6 @@ function HomeCamping({ route }: HomeCampingProps) {
   }, []);
 
   return (
-    <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
       <View style={styles.container}>
         <TouchableOpacity style={styles.profilePicContainer}>
           <Image source={userPhoto} style={styles.profilePic} />
@@ -49,7 +47,6 @@ function HomeCamping({ route }: HomeCampingProps) {
           <Text style={styles.buttonText}>Voir activité vacancier</Text>
         </TouchableOpacity>
       </View>
-    </ImageBackground>
   );
 }
 

@@ -1,11 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ImageBackground, TouchableOpacity, TextInput, Image, Alert } from 'react-native';
-import { Picker } from '@react-native-picker/picker';
+import { View, Text, ImageBackground, TouchableOpacity, TextInput, Image, Alert, ScrollView } from 'react-native';
 import HomeScreenStyle from '../Styles/HomeScreenStyles';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-
-const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png" };
 
 type RootStackParamList = {
   HomeScreen: { userId: number; userName: string };
@@ -26,6 +23,7 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
   const [selectedCamping, setSelectedCamping] = useState<number | null>(null);
   const [password, setPassword] = useState<string>('');
   const [userPhoto, setUserPhoto] = useState<string | null>(null);
+  const [showDropdown, setShowDropdown] = useState(false);
 
   useEffect(() => {
     loadCampings();
@@ -34,9 +32,15 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
 
   const loadCampings = async () => {
     try {
-      const response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/NomCampingCombo.php');
-      const data = await response.json();
-      setCampings(data); 
+      const response = await fetch('https://adrien-pago-portfolio.fr/PHP_APPLICATION_MOBILE/NomCampingCombo.php');
+      const responseText = await response.text();
+      try {
+        const data = JSON.parse(responseText);
+        setCampings(data);
+      } catch (jsonError) {
+        console.error("Erreur lors du parsing JSON:", jsonError);
+        Alert.alert("Erreur de chargement", "La réponse du serveur n'est pas au format JSON attendu.");
+      }
     } catch (error) {
       console.error(error);
       Alert.alert("Erreur de chargement", "Impossible de charger les campings.");
@@ -56,31 +60,30 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
       Alert.alert("Erreur", "Veuillez sélectionner un camping.");
       return;
     }
-    // Trouver le nom du camping basé sur l'ID sélectionné
     const selectedCampingData = campings.find(camping => camping.id === selectedCamping);
     if (!selectedCampingData) {
       Alert.alert("Erreur", "Camping sélectionné non trouvé.");
       return;
     }
-  
+
     try {
-      let response = await fetch('https://vaca-meet.fr/PHP_APPLICATION_MOBILE/LoginCamping.php', {
+      let response = await fetch('https://adrien-pago-portfolio.fr/PHP_APPLICATION_MOBILE/LoginCamping.php', {
         method: 'POST',
         headers: {
           Accept: 'application/json',
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          nomCamping: selectedCampingData.nom, // Envoyer le nom du camping
+          nomCamping: selectedCampingData.nom,
           password: password,
         })
       });
       let json = await response.json();
-      if(json.status === 'success') {
-        navigation.navigate('HomeCamping', { 
+      if (json.status === 'success') {
+        navigation.navigate('HomeCamping', {
           idCamping: selectedCamping,
           campingName: selectedCampingData.nom,
-          userId , 
+          userId,
           userName
         });
       } else {
@@ -92,8 +95,28 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
     }
   };
 
+  const renderDropdown = () => {
+    return (
+      <View style={HomeScreenStyle.dropdown}>
+        <ScrollView>
+          {campings.map((camping, index) => (
+            <TouchableOpacity
+              key={camping.id}
+              style={[HomeScreenStyle.dropdownItem, { backgroundColor: index % 2 === 0 ? '#f9fafb' : '#f0f4f8' }]}
+              onPress={() => {
+                setSelectedCamping(camping.id);
+                setShowDropdown(false);
+              }}
+            >
+              <Text style={HomeScreenStyle.dropdownItemText}>{camping.nom}</Text>
+            </TouchableOpacity>
+          ))}
+        </ScrollView>
+      </View>
+    );
+  };
+
   return (
-    <ImageBackground source={backgroundImage} style={HomeScreenStyle.backgroundImage}>
       <View style={HomeScreenStyle.container}>
         <TouchableOpacity style={HomeScreenStyle.profilePicContainer} onPress={handleProfilePicChange}>
           <Image source={userPhoto ? { uri: userPhoto } : require('../ASSET/profil.jpg')} style={HomeScreenStyle.profilePic} />
@@ -101,15 +124,12 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
         <Text style={HomeScreenStyle.userName}>{userName}</Text>
         <View style={HomeScreenStyle.frameContainer}>
           <Text style={HomeScreenStyle.label}>Nom du camping :</Text>
-          <Picker
-            selectedValue={selectedCamping}
-            onValueChange={(itemValue: any) => setSelectedCamping(itemValue)}
-            style={HomeScreenStyle.input}
-          >
-            {campings.map((camping, index) => (
-              <Picker.Item key={index} label={camping.nom} value={camping.id} />
-            ))}
-          </Picker>
+          <TouchableOpacity style={HomeScreenStyle.input} onPress={() => setShowDropdown(!showDropdown)}>
+            <Text style={HomeScreenStyle.inputText}>
+              {selectedCamping ? campings.find(c => c.id === selectedCamping)?.nom : "Sélectionner un camping"}
+            </Text>
+          </TouchableOpacity>
+          {showDropdown && renderDropdown()}
           <TextInput
             style={HomeScreenStyle.input}
             onChangeText={(text: string) => setPassword(text)}
@@ -122,7 +142,6 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
           </TouchableOpacity>
         </View>
       </View>
-    </ImageBackground>
   );
 }
 

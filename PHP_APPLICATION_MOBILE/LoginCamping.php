@@ -23,8 +23,8 @@ if (!$nomCamping || !$password) {
     exit();
 }
 
-// Requête pour vérifier les informations de connexion
-$stmt = $conn->prepare("SELECT ID_CAMPING, NOM_CAMPING FROM CAMPING WHERE NOM_CAMPING=? AND MDP_VACANCIER=?");
+// Requête pour récupérer le mot de passe haché
+$stmt = $conn->prepare("SELECT id_camping, nom_camping, mdp_vacancier FROM CAMPING WHERE nom_camping=?");
 
 // Vérifier si la préparation de la requête a réussi
 if (!$stmt) {
@@ -33,15 +33,22 @@ if (!$stmt) {
 }
 
 // Associer les paramètres et exécuter la requête
-$stmt->bind_param("ss", $nomCamping, $password);
+$stmt->bind_param("s", $nomCamping);
 $stmt->execute();
 
 // Récupérer les résultats
 $result = $stmt->get_result();
 
 if ($result->num_rows > 0) {
-    // Authentification réussie
-    echo json_encode(['status' => 'success', 'message' => 'Connexion réussie.']);
+    $row = $result->fetch_assoc();
+    // Vérifier le mot de passe
+    if (password_verify($password, $row['mdp_vacancier'])) {
+        // Authentification réussie
+        echo json_encode(['status' => 'success', 'message' => 'Connexion réussie.']);
+    } else {
+        // Authentification échouée
+        echo json_encode(['status' => 'failed', 'message' => 'Nom de camping ou mot de passe incorrect.']);
+    }
 } else {
     // Authentification échouée
     echo json_encode(['status' => 'failed', 'message' => 'Nom de camping ou mot de passe incorrect.']);
@@ -49,4 +56,3 @@ if ($result->num_rows > 0) {
 
 $stmt->close();
 $conn->close();
-?>
