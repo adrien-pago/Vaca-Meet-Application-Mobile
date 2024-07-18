@@ -8,7 +8,7 @@ use PHPMailer\PHPMailer\Exception;
 require_once 'config.php';
 $conn = new mysqli($servername, $dbusername, $dbpassword, $dbname);
 if ($conn->connect_error) {
-    die("La connexion à la base de données a échoué " . $conn->connect_error);
+    die(json_encode(['status' => 'error', 'message' => "La connexion à la base de données a échoué " . $conn->connect_error]));
 }
 
 // Récupérer les données envoyées par l'application
@@ -40,7 +40,7 @@ $base_url = "https://adrien-pago-portfolio.fr/";
 $confirmation_link = $base_url . '/PHP_APPLICATION_MOBILE/confirm_Token.php?token=' . $token;
 
 $mail = new PHPMailer(true);
-$mail->SMTPDebug = 2; // Activer le débogage SMTP
+$mail->SMTPDebug = 0; // Désactiver le débogage SMTP pour la production
 try {
     $mail->isSMTP();
     $mail->Host = 'smtp.ionos.fr';
@@ -48,7 +48,7 @@ try {
     $mail->Username = 'support-technique@vaca-meet.fr';
     $mail->Password = 'Support-AntiHackMessagerie489?';
     $mail->SMTPSecure = 'tls';
-    $mail->Port = 587; // Assurez-vous d'utiliser le bon port pour TLS
+    $mail->Port = 587;
 
     $mail->setFrom('adrien-pago@vaca-meet.fr', 'Support Technique');
     $mail->addAddress($email);
@@ -59,13 +59,11 @@ try {
 
     $mail->send();
 } catch (Exception $e) {
-    $response_array['status'] = 'error';
-    $response_array['message'] = "Le message n'a pas pu être envoyé. Erreur : {$mail->ErrorInfo}";
-    echo json_encode($response_array);
-    die();
+    echo json_encode(['status' => 'error', 'message' => "Le message n'a pas pu être envoyé. Erreur : " . $mail->ErrorInfo]);
+    exit();
 }
 
-$stmt = $conn->prepare("INSERT INTO COMPTE_VACA_MEET (nom, mdpVaca, email, tokenCompte) VALUES (?, ?, ?, ?)");
+$stmt = $conn->prepare("INSERT INTO COMPTE_VACA_MEET (nom, mdpVaca, email, tokenComfirm) VALUES (?, ?, ?, ?)");
 if ($stmt === false) {
     echo json_encode(['status' => 'error', 'message' => "Erreur de préparation " . $conn->error]);
     exit();

@@ -10,14 +10,14 @@ if ($conn->connect_error) {
 }
 
 // Préparer la requête pour éviter les injections SQL
-$query = $conn->prepare("SELECT ID_CAMPING, NOM_CAMPING FROM CAMPING");
+$query = $conn->prepare("SELECT id_camping, nom_camping FROM CAMPING");
 $query->execute();
 $result = $query->get_result();
 
 if ($result->num_rows > 0) {
     $campings = [];
     while($row = $result->fetch_assoc()) {
-        array_push($campings, ["id" => $row["ID_CAMPING"], "nom" => $row["NOM_CAMPING"]]);
+        array_push($campings, ["id" => $row["id_camping"], "nom" => $row["nom_camping"]]);
     }
     echo json_encode($campings);
 } else {

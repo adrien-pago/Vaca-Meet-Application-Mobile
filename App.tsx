@@ -91,7 +91,10 @@ function LoginScreen({ navigation }: LoginScreenProps) {
           pseudo: pseudo,
         })
       });
-      let json = await response.json();
+      let responseText = await response.text();  // Recevez la réponse sous forme de texte brut
+      console.log("Réponse texte brute:", responseText); // Log pour le débogage
+      let json = JSON.parse(responseText);  // Parsez le texte en JSON
+      console.log("JSON reçu:", json);  // Log pour le débogage
       Alert.alert("Réponse du serveur:", json.message);
       if (json.status === 'success') {
         setModalVisible(false);

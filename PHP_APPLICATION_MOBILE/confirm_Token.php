@@ -12,14 +12,14 @@ if ($conn->connect_error) {
 $confirm_token = $_GET['token'];
 
 // Préparer la requête pour éviter les injections SQL
-$stmt = $conn->prepare("SELECT * FROM COMPTE_VACA_MEET WHERE TOKEN_COMPTE = ?");
+$stmt = $conn->prepare("SELECT * FROM COMPTE_VACA_MEET WHERE tokenComfirm = ?");
 $stmt->bind_param("s", $confirm_token);
 $stmt->execute();
 $result = $stmt->get_result();
 
 if ($result->num_rows == 1) {
     // Si le jeton de confirmation est valide, mettre à jour la colonne `COMPTE_CONFIRME` à 1
-    $update_stmt = $conn->prepare("UPDATE COMPTE_VACA_MEET SET COMPTE_CONFIRME=1 WHERE TOKEN_COMPTE = ?");
+    $update_stmt = $conn->prepare("UPDATE COMPTE_VACA_MEET SET isVerified=1 WHERE tokenComfirm = ?");
     $update_stmt->bind_param("s", $confirm_token);
     if ($update_stmt->execute()) {
         echo "Votre compte a été confirmé avec succès.";
