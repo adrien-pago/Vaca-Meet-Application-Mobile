@@ -1,20 +1,18 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, Modal, TextInput, ImageBackground, Button, Image, Platform } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, Modal, TextInput, Button } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { RouteProp } from '@react-navigation/native';
 import { useFocusEffect } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
 import styles from '../Styles/ActivityRoomStyles';
 
-const backgroundImage = { uri: "https://vaca-meet.fr/ASSET/vaca_meet_fond_2.png" };
-const upvoteIcon = require('../ASSET/upvote.png');
-
+// variable pour les activités
 type ActivityEvent = {
     LIBELLE_EVENT_ROOM: string;
     NOM: string;
     NB_VACA: number;
     DATE_TIME_EVENT: Date;
-    ID_ROOM_EVENT: number;
+    id_room_event: number;
     STATUT_VOTE: string;
 };
 
@@ -32,6 +30,7 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
     const [isModalVisible, setIsModalVisible] = useState(false);
     const [formDateTime, setFormDateTime] = useState('');
     const [formLibelle, setFormLibelle] = useState('');
+    const [modalDate, setModalDate] = useState(new Date()); // Date spécifique à la modal
 
     useEffect(() => {
         loadActivities(selectedDate);
@@ -43,6 +42,7 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
         }, [selectedDate, idCamping])
     );
 
+    // Charger les activités en fonction du jour choisi
     const loadActivities = async (date: Date) => {
         const dateStr = date.toISOString().split('T')[0];
         try {
@@ -51,6 +51,7 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
             const data = await response.json();
+            console.log('Data received:', data); 
             if (data.status === 'success') {
                 const formattedActivities: ActivityEvent[] = data.data.map((activity: ActivityEvent) => ({
                     ...activity,
@@ -65,23 +66,29 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
         }
     };
 
-    const onChangeDate = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
+    // Met à jour la date dans la modal sans appeler loadActivities
+    const onChangeDateInModal = (event: DateTimePickerEvent, selectedDate: Date | undefined) => {
         if (selectedDate) {
-            setSelectedDate(selectedDate);
+            setModalDate(selectedDate);
+            const formattedDate = selectedDate.toISOString().split('T')[0];
+            const formattedTime = selectedTime.toTimeString().slice(0, 5); // Format HH:MM
+            setFormDateTime(`${formattedDate} ${formattedTime}`);
             setShowDatePicker(false);
         }
     };
 
-    const onChangeTime = (event: DateTimePickerEvent, selectedTime: Date | undefined) => {
+    // Met à jour l'heure dans la modal sans appeler loadActivities
+    const onChangeTimeInModal = (event: DateTimePickerEvent, selectedTime: Date | undefined) => {
         if (selectedTime) {
             setSelectedTime(selectedTime);
             const formattedTime = selectedTime.toTimeString().slice(0, 5); // Format HH:MM
-            const dateStr = `${selectedDate.toISOString().split('T')[0]} ${formattedTime}`;
-            setFormDateTime(dateStr);
+            const formattedDate = modalDate.toISOString().split('T')[0];
+            setFormDateTime(`${formattedDate} ${formattedTime}`);
             setShowTimePicker(false);
         }
     };
 
+    // Insert en base de données une nouvelle activité
     const handleAddActivity = async () => {
         if (!formDateTime || !formLibelle) {
             alert('Veuillez remplir tous les champs.');
@@ -102,7 +109,7 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
             if (jsonResponse.status === 'success') {
                 alert('Activité ajoutée avec succès');
                 setIsModalVisible(false);
-                loadActivities(selectedDate);
+                loadActivities(selectedDate); // Recharge les activités avec la date actuelle
             } else {
                 alert(`Erreur lors de l'ajout de l'activité: ${jsonResponse.message}`);
             }
@@ -112,6 +119,7 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
         }
     };
 
+    // Gérer les votes de participation des vacanciers sur l'activité
     const handleInterest = async (activityId: number) => {
         try {
             const response = await fetch('https://adrien-pago-portfolio.fr/PHP_APPLICATION_MOBILE/UpdateVoteCount.php', {
@@ -127,7 +135,7 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
             const data = await response.json();
             if (data.status === 'success') {
                 const updatedActivities = activities.map(activity => {
-                    if (activity.ID_ROOM_EVENT === activityId) {
+                    if (activity.id_room_event === activityId) {
                         return {
                             ...activity,
                             NB_VACA: data.data.NB_VACA_JOIN,
@@ -146,41 +154,69 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
     };
 
     return (
-        <ImageBackground source={backgroundImage} style={styles.backgroundImage}>
-            <ScrollView style={styles.container}>
+        <ScrollView style={styles.container}>
+            <View style={styles.card}>
                 <TouchableOpacity style={styles.button} onPress={() => setIsModalVisible(true)}>
                     <Text style={styles.buttonText}>Proposer une activité</Text>
                 </TouchableOpacity>
-                <Text style={styles.header}>Activités du {selectedDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}</Text>
-                {activities.map((activity, index) => (
-                    <View key={index} style={styles.activityContainer}>
-                        <Text style={styles.activityText}>
-                            {activity.LIBELLE_EVENT_ROOM}
-                            {"\n"}Proposé par : {activity.NOM}
-                            {"\n"}Date et Heure : {activity.DATE_TIME_EVENT.toLocaleString('fr-FR')}
-                        </Text>
-                        <View style={styles.detailContainer}>
-                            <TouchableOpacity onPress={() => handleInterest(activity.ID_ROOM_EVENT)}>
-                                <Text style={styles.buttonText}>
-                                    {activity.STATUT_VOTE === 'upvote' ? 'Je ne veux plus participer' : 'Je veux participer'}
-                                </Text>
-                            </TouchableOpacity>
-                        </View>
+                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                    <Text style={styles.datePickerText}>Choisir une date pour voir les activités</Text>
+                </TouchableOpacity>
+                {showDatePicker && (
+                    <DateTimePicker
+                        value={selectedDate}
+                        mode="date"
+                        is24Hour={true}
+                        display="default"
+                        onChange={(event, date) => {
+                            if (date) {
+                                setSelectedDate(date);
+                            }
+                            setShowDatePicker(false);
+                        }}
+                    />
+                )}
+            </View>
+            <Text style={styles.dateLibelle}>
+                    Activités du {selectedDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric' })}
+            </Text>
+            {activities.map((activity) => (
+                <View key={activity.id_room_event} style={styles.activityContainer}>
+                    <Text style={styles.activityText}>
+                        {activity.LIBELLE_EVENT_ROOM}
+                        {"\n"}Proposé par : {activity.NOM}
+                        {"\n"}Date et Heure : {activity.DATE_TIME_EVENT.toLocaleString('fr-FR')}
+                        {"\n"}Nombre de participants : {activity.NB_VACA}
+                    </Text>
+                    <View style={styles.detailContainer}>
+                        <TouchableOpacity onPress={() => handleInterest(activity.id_room_event)}>
+                            <Text style={styles.buttonText}>
+                                {activity.STATUT_VOTE === 'upvote' ? 'Je ne veux plus participer' : 'Je veux participer'}
+                            </Text>
+                        </TouchableOpacity>
                     </View>
-                ))}
-                <Modal visible={isModalVisible} animationType="slide" transparent={true}>
-                    <View style={styles.modalView}>
-                        <TextInput style={styles.input} placeholder="Libelle" onChangeText={setFormLibelle} value={formLibelle} maxLength={250} />
+                </View>
+            ))}
+            <Modal visible={isModalVisible} animationType="slide" transparent={true}>
+                <View style={styles.modalView}>
+                    <View style={styles.modalCard}>
+                        <TextInput
+                            style={styles.input}
+                            placeholder="Libelle"
+                            onChangeText={setFormLibelle}
+                            value={formLibelle}
+                            maxLength={250}
+                        />
                         <TouchableOpacity onPress={() => setShowDatePicker(true)}>
                             <Text style={styles.datePickerText}>Choisir une date</Text>
                         </TouchableOpacity>
                         {showDatePicker && (
                             <DateTimePicker
-                                value={selectedDate}
+                                value={modalDate}
                                 mode="date"
                                 is24Hour={true}
                                 display="default"
-                                onChange={onChangeDate}
+                                onChange={onChangeDateInModal}
                             />
                         )}
                         <TouchableOpacity onPress={() => setShowTimePicker(true)}>
@@ -192,7 +228,7 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                                 mode="time"
                                 is24Hour={true}
                                 display="default"
-                                onChange={onChangeTime}
+                                onChange={onChangeTimeInModal}
                             />
                         )}
                         <TextInput
@@ -201,14 +237,16 @@ const ActivityRoom: React.FC<ActivityRoomProps> = ({ route }) => {
                             value={formDateTime}
                             editable={false}
                         />
-                        <View style={styles.buttonContainer}>
-                            <Button title="Valider" onPress={handleAddActivity} />
-                            <Button title="Annuler" onPress={() => setIsModalVisible(false)} />
-                        </View>
+                        <TouchableOpacity style={styles.button} onPress={handleAddActivity}>
+                            <Text style={styles.buttonText}>Ajouter</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.button} onPress={() => setIsModalVisible(false)}>
+                            <Text style={styles.buttonText}>Annuler</Text>
+                        </TouchableOpacity>
                     </View>
-                </Modal>
-            </ScrollView>
-        </ImageBackground>
+                </View>
+            </Modal>
+        </ScrollView>
     );
 };
 

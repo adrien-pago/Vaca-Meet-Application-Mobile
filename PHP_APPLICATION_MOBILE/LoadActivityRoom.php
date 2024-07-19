@@ -10,38 +10,59 @@ if ($conn->connect_error) {
     exit(); 
 }
 
-$idCamping = isset($_GET['idCamping']) ? (int)$_GET['idCamping'] : null;
-$dateStr = isset($_GET['date']) ? $_GET['date'] : null;
-$userId = isset($_GET['userId']) ? (int)$_GET['userId'] : null;
+$idCamping = $_GET['idCamping'];
+$date = $_GET['date'];
+$userId = $_GET['userId'];
 
-if (empty($idCamping) || empty($dateStr) || empty($userId)){ 
-    echo json_encode(['status' => 'error', 'message' => 'Paramètres manquants ou invalides']);
-    exit();
+$response = [];
+
+if (!isset($idCamping) || !isset($date) || !isset($userId)) {
+    $response['status'] = 'error';
+    $response['message'] = 'Invalid parameters.';
+    echo json_encode($response);
+    exit;
 }
 
-$query = "SELECT v.nom, r.libelle as LIBELLE_EVENT_ROOM, r.date_time_event as DATE_TIME_EVENT, r.nb_vaca as NB_VACA, r.id_room_event as ID_ROOM_EVENT, 
-          CASE WHEN (SELECT COUNT(*) FROM ROOM_EVENT_PARTICIPANTS WHERE id_vaca = ? AND id_room_event = r.id_room_event) > 0 THEN 'upvote' ELSE 'none' END AS STATUT_VOTE 
-          FROM COMPTE_VACA_MEET v, ROOM_EVENT r, CAMPING c 
-          WHERE c.id_camping = ? AND c.id_camping = r.id_camping AND v.idCompteVaca = r.id_compte_vaca 
-          AND DATE(r.date_time_event) = ?";
+try {
+    $stmt = $conn->prepare("
+        SELECT
+            re.id_room_event AS ID_ROOM_EVENT,
+            re.libelle AS LIBELLE_EVENT_ROOM,
+            re.date_time_event AS DATE_TIME_EVENT,
+            cv.nom AS NOM,
+            re.nb_vaca AS NB_VACA,
+            IF(pr.id_vaca IS NOT NULL, 'upvote', 'none') AS STATUT_VOTE
+        FROM
+            ROOM_EVENT re
+        JOIN
+            COMPTE_VACA_MEET cv ON re.id_compte_vaca = cv.idCompteVaca
+        LEFT JOIN
+            PARTICIPANT_ROOM_EVENT pr ON re.id_room_event = pr.id_room_event AND pr.id_vaca = ?
+        WHERE
+            re.id_camping = ? AND DATE(re.date_time_event) = ?
+        ORDER BY
+            re.date_time_event
+    ");
+    $stmt->bind_param("iis", $userId, $idCamping, $date);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $activities = $result->fetch_all(MYSQLI_ASSOC);
 
-$stmt = $conn->prepare($query);
-if (!$stmt) {
-    echo json_encode(['status' => 'error', 'message' => 'Erreur de préparation de la requête']);
-    exit();
+    if ($activities) {
+        $response['status'] = 'success';
+        $response['data'] = $activities;
+    } else {
+        $response['status'] = 'error';
+        $response['message'] = 'No activities found.';
+    }
+
+    $stmt->close();
+    $conn->close();
+
+} catch (Exception $e) {
+    $response['status'] = 'error';
+    $response['message'] = 'Database error: ' . $e->getMessage();
 }
 
-$stmt->bind_param('iis', $userId, $idCamping, $dateStr); 
-$stmt->execute();
-$result = $stmt->get_result();
-
-$activities = [];
-while ($row = $result->fetch_assoc()) {
-    $row['DATE_TIME_EVENT'] = date('Y-m-d H:i:s', strtotime($row['DATE_TIME_EVENT']));
-    $activities[] = $row;
-}
-
-echo json_encode(['status' => 'success', 'data' => $activities]);
-
-$stmt->close();
-$conn->close();
+echo json_encode($response);
+?>

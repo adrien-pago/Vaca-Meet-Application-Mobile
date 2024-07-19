@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ImageBackground } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity } from 'react-native';
 import DateTimePicker, { DateTimePickerEvent } from '@react-native-community/datetimepicker';
 import { RouteProp } from '@react-navigation/native';
 import { RootStackParamList } from '../App';
@@ -47,7 +47,6 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
         try {
             const response = await fetch(`https://adrien-pago-portfolio.fr/PHP_APPLICATION_MOBILE/LoadPlanningCamping.php?dateDebut=${startDateStr}&dateFin=${endDateStr}&idCamping=${idCamping}`);
             
-    
             if (!response.ok) {
                 throw new Error(`HTTP error! status: ${response.status}`);
             }
@@ -106,24 +105,26 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
 
     return (
         <ScrollView style={styles.container}>
-            <TouchableOpacity onPress={() => setShowDatePicker(true)}>
-                <Text style={styles.datePickerText}>Choisir la semaine</Text>
-            </TouchableOpacity>
-            {displayDatePicker && (
-                <DateTimePicker
-                    value={startDate}
-                    mode="date"
-                    is24Hour={true}
-                    display="default"
-                    onChange={onChangeDate}
-                />
-            )}
             <Text style={styles.header}>Planning du Camping</Text>
-            <Text style={styles.datesLabel}>
-                Du {startDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}{' '}
-                au {endDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
-            </Text>
-
+            <View style={styles.card}>
+                <TouchableOpacity onPress={() => setShowDatePicker(true)}>
+                    <Text style={styles.datePickerText}>Choisir la semaine</Text>
+                </TouchableOpacity>
+                {displayDatePicker && (
+                    <DateTimePicker
+                        value={startDate}
+                        mode="date"
+                        is24Hour={true}
+                        display="default"
+                        onChange={onChangeDate}
+                    />
+                )}
+            
+                <Text style={styles.datesLabel}>
+                    Du {startDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}{' '}
+                    au {endDate.toLocaleDateString('fr-FR', { weekday: 'long', day: 'numeric', month: 'long' })}
+                </Text>
+            </View>
             {Object.keys(planning).map((dayKey, dayIndex) => (
                 <View key={dayIndex} style={styles.dayContainer}>
                     {planning[dayKey].length > 0 && (
@@ -136,6 +137,7 @@ function ViewPlanningCamping({ route }: ViewPlanningCampingProps) {
                     ))}
                 </View>
             ))}
+            
         </ScrollView>
     );
 }

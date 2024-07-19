@@ -35,6 +35,7 @@ function HomeCamping({ route }: HomeCampingProps) {
           <TouchableOpacity style={styles.profilePicContainer}>
             <Image source={userPhoto} style={styles.profilePic} />
           </TouchableOpacity>
+          <Text style={styles.welcomeText}>{userName}</Text>
           <Text style={styles.welcomeText}>Bienvenue au {campingName}</Text>
           <View style={styles.cardContent}>
             <TouchableOpacity

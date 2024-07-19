@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, ImageBackground, TouchableOpacity, TextInput, Image, Alert, ScrollView } from 'react-native';
+import { View, Text, TouchableOpacity, TextInput, Image, Alert, ScrollView } from 'react-native';
 import HomeScreenStyle from '../Styles/HomeScreenStyles';
 import { RouteProp } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
@@ -95,6 +95,7 @@ function HomeScreen({ route, navigation }: HomeScreenProps) {
     }
   };
 
+  //Afficher la liste des nom de camping dans la combo
   const renderDropdown = () => {
     return (
       <View style={HomeScreenStyle.dropdown}>

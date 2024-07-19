@@ -1,186 +1,115 @@
 import { StyleSheet } from 'react-native';
 
-const styles = StyleSheet.create({
-    backgroundImage: {
-        flex: 1,
-        resizeMode: 'cover',
-    },
-    title: {
-        fontSize: 18,
-        fontWeight: 'bold',
-        color: '#1e3a8a', // Bleu foncé
-        marginBottom: 10,
-        textShadowColor: 'rgba(0, 0, 0, 0.75)',
-        textShadowOffset: { width: -1, height: 1 },
-        textShadowRadius: 10,
-      },
-      title1 :{
-        fontSize: 15,
-        color: 'black', // Bleu foncé
-        marginBottom: 10,
-        textShadowColor: 'rgba(0, 0, 0, 0.75)',
-        textShadowOffset: { width: -1, height: 1 },
-        textShadowRadius: 10,
-      },
-
-    container: {
-        flex: 1,
-        marginTop: 20,
-    },
-
-    header: {
-        fontSize: 22,
-        fontWeight: 'bold',
-        textAlign: 'center',
-        marginVertical: 15,
-        color: '#333',
-    },
-
-    datePickerText: {
-        textAlign: 'center',
-        fontSize: 18,
-        color: '#ffffff', 
-        padding: 12,
-        backgroundColor: '#6A5ACD', 
-        borderRadius: 8,
-        marginVertical: 8,
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-    },
-
-    datesLabel: {
-        textAlign: 'center',
-        fontSize: 17,
-        marginVertical: 10,
-        fontWeight: '500',
-        color: '#555',
-    },
-
-    activityContainer: {
-        marginVertical: 7,
-        backgroundColor: '#f8f9fa',
-        borderRadius: 10,
-        padding: 10,
-        elevation: 3,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 3 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-    },
-
-    activityText: {
-        fontSize: 15,
-    },
-
-    modalView: {
-        margin: 20,
-        backgroundColor: "white",
-        borderRadius: 20,
-        padding: 35,
-        alignItems: "center",
-        shadowColor: "#000",
-        shadowOffset: {
-            width: 0,
-            height: 4
-        },
-        shadowOpacity: 0.3,
-        shadowRadius: 5,
-        elevation: 10
-    },
-    text: {
-        textAlign: 'center',
-        fontSize: 20,
-        marginVertical: 10,
-        color: 'black', 
-        fontWeight: 'bold',
-    },
-
-    picker: {
-        width: '100%', 
-        height: 50,
-        marginVertical: 10, 
-    },
-
-    label: {
-        fontSize: 16,
-        marginVertical: 10,
-        color: '#333',
-        fontWeight: 'bold',
-    },
-
-    button: {
-        padding: 12,
-        backgroundColor: '#6A5ACD', 
-        borderRadius: 8,
-        marginVertical: 8,
-        elevation: 2,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 2,
-    },
-    buttonText: {
-        color: '#ffffff', 
-        textAlign: 'center',
-        fontSize: 18,
-    },
-
-    buttonContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        width: '100%',
-        marginTop: 10,
-    },
-
-    input: {
-        height: 50,
-        marginVertical: 10,
-        borderWidth: 1,
-        borderColor: '#007bff', 
-        borderRadius: 10,
-        padding: 10,
-        fontSize: 16,
-        backgroundColor: '#f8f9fa', 
-        width: '100%', 
-    },
-
-    detailContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-    },
+export default StyleSheet.create({
     
-    voteContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
-    
-    upvoteIcon: {
-        width: 30,
-        height: 30,
-        resizeMode: 'contain',
-        marginLeft: 10, 
-    },
+  container: {
+    flex: 1,
+    backgroundColor: '#f0f4f8',
+    padding: 20,
+  },
 
-    upvoteIconActive: {
-        tintColor: 'blue', // Changez la couleur de l'icône lorsque l'utilisateur a déjà cliqué dessus
-    },
+  card: {
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
 
-    upvoteCount: {
-        marginLeft: 5,
-        color: 'black',
-    },
+  dateLibelle: {
+    color: '#000',
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginVertical: 20,
+    textAlign: 'center',
+},  
 
-    upvoteCountActive: {
-        color: 'blue', // Changez la couleur du compteur lorsque l'utilisateur a déjà cliqué dessus
-    },
+  button: {
+    backgroundColor: '#3b82f6',
+    paddingVertical: 15,
+    paddingHorizontal: 20,
+    borderRadius: 10,
+    marginVertical: 5,
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 5,
+    elevation: 5,
+  },
+ 
+  buttonText: {
+    color: 'black',
+    backgroundColor: '#3b82f6',
+    textAlign: 'center',
+    fontSize: 18,
+    fontWeight: '600',
+  },
 
-    hidden: {
-        display: 'none', // Cache le texte
-    },
+  datePickerText: {
+    color: '#3b82f6',
+    borderRadius: 10,
+    fontSize: 18,
+    marginVertical: 10,
+    textAlign: 'center',
+  },
+
+  activityContainer: {
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
+    padding: 15,
+    marginVertical: 10,
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 3,
+  },
+
+  modalView: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: 'rgba(0,0,0,0.5)', // Fond semi-transparent
+    padding: 20,
+  },
+
+  modalCard: {
+    backgroundColor: 'white',
+    borderRadius: 10,
+    padding: 20,
+    width: '100%', // Prend toute la largeur
+    maxWidth: 600, // Limite la largeur maximale pour les grands écrans
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.3,
+    shadowRadius: 10,
+    elevation: 5,
+  },
+
+  activityText: {
+    fontSize: 16,
+    color: '#333333',
+  },
+
+  detailContainer: {
+    marginTop: 10,
+    alignItems: 'center',
+    backgroundColor:'#3b82f6',
+    borderRadius: 10,
+  },
+
+  input: {
+    borderColor: '#ddd',
+    borderWidth: 1,
+    borderRadius: 8,
+    padding: 10,
+    marginBottom: 15,
+    fontSize: 16,
+    width: '100%', // Prend toute la largeur
+  },
 });
-
-export default styles;

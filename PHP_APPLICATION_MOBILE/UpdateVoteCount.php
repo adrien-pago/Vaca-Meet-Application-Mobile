@@ -15,58 +15,55 @@ $input = json_decode($inputJSON, TRUE);
 $userId = isset($input['userId']) ? $input['userId'] : null;
 $activityId = isset($input['activityId']) ? $input['activityId'] : null;
 
-$requete = $conn->prepare("SELECT VOTE_STATE FROM VOTE_STATE WHERE ID_VACA = ? AND ID_ROOM_EVENT = ?");
-$requete->bind_param("ii", $userId, $activityId);
-$requete->execute();
-$result = $requete->get_result(); // Utilisez get_result() pour obtenir le résultat
-$voteState = null;
-if ($row = $result->fetch_assoc()) {
-    $voteState = $row['VOTE_STATE'];
-}
-$requete->close();
-
-$updateVote = false;
-$updateCount = 0;
-
-if (is_null($voteState)) {
-    // Cas 1: Utilisateur jamais voté
-    $requete = $conn->prepare("INSERT INTO VOTE_STATE (ID_VACA, ID_ROOM_EVENT, VOTE_STATE) VALUES (?, ?, 'upvote')");
-    $updateCount = 1; // Augmenter le compteur
-} elseif ($voteState === 'upvote') {
-    // Cas 2: Utilisateur a déjà voté upvote
-    $requete = $conn->prepare("UPDATE VOTE_STATE SET VOTE_STATE = 'downvote' WHERE ID_VACA = ? AND ID_ROOM_EVENT = ?");
-    $updateCount = -1; // Diminuer le compteur
-} elseif ($voteState === 'downvote') {
-    // Cas 3: Utilisateur a déjà voté downvote
-    $requete = $conn->prepare("UPDATE VOTE_STATE SET VOTE_STATE = 'upvote' WHERE ID_VACA = ? AND ID_ROOM_EVENT = ?");
-    $updateCount = 1; // Augmenter le compteur
+if (!$userId || !$activityId) {
+    echo json_encode(['status' => 'error', 'message' => 'Invalid parameters.']);
+    exit();
 }
 
-if (isset($requete)) {
-    $requete->bind_param("ii", $userId, $activityId);
-    if ($requete->execute()) {
-        $updateVote = true;
+try {
+    $stmt = $conn->prepare("SELECT id_vaca FROM PARTICIPANT_ROOM_EVENT WHERE id_vaca = ? AND id_room_event = ?");
+    $stmt->bind_param("ii", $userId, $activityId);
+    $stmt->execute();
+    $stmt->store_result();
+
+    if ($stmt->num_rows > 0) {
+        // L'utilisateur participe déjà, on le retire
+        $stmt = $conn->prepare("DELETE FROM PARTICIPANT_ROOM_EVENT WHERE id_vaca = ? AND id_room_event = ?");
+        $stmt->bind_param("ii", $userId, $activityId);
+        $stmt->execute();
+
+        $action = 'downvote';
+    } else {
+        // L'utilisateur ne participe pas encore, on l'ajoute
+        $stmt = $conn->prepare("INSERT INTO PARTICIPANT_ROOM_EVENT (id_vaca, id_room_event) VALUES (?, ?)");
+        $stmt->bind_param("ii", $userId, $activityId);
+        $stmt->execute();
+
+        $action = 'upvote';
     }
-    $requete->close();
-}
 
-if ($updateVote) {
-    $requete = $conn->prepare("UPDATE ROOM_EVENT SET NB_VACA_JOIN = NB_VACA_JOIN + ? WHERE ID_ROOM_EVENT = ?");
-    $requete->bind_param("ii", $updateCount, $activityId);
-    $requete->execute();
-    $requete->close();
-    
-    // Récupérer le nombre de votes mis à jour
-    $requete = $conn->prepare("SELECT NB_VACA_JOIN FROM ROOM_EVENT WHERE ID_ROOM_EVENT = ?");
-    $requete->bind_param("i", $activityId);
-    $requete->execute();
-    $requete->bind_result($nbVacaJoin);
-    $requete->fetch();
-    $requete->close();
-    
-    echo json_encode(['status' => 'success', 'data' => ['NB_VACA_JOIN' => $nbVacaJoin]]);
-} else {
-    echo json_encode(['status' => 'error', 'message' => 'Erreur lors de la mise à jour du vote.']);
-}
+    // Récupérer le nouveau nombre de participants
+                          
+    $stmt = $conn->prepare("SELECT COUNT(*) as NB_VACA_JOIN FROM PARTICIPANT_ROOM_EVENT WHERE id_room_event = ?");
+    $stmt->bind_param("i", $activityId);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $count = $result->fetch_assoc();
 
-$conn->close();
+    $response = [
+        'status' => 'success',
+        'data' => [
+            'NB_VACA_JOIN' => $count['NB_VACA_JOIN'],
+            'STATUT_VOTE' => $action
+        ]
+    ];
+
+    echo json_encode($response);
+
+    $stmt->close();
+    $conn->close();
+
+} catch (Exception $e) {
+    echo json_encode(['status' => 'error', 'message' => 'Database error: ' . $e->getMessage()]);
+}
+?>

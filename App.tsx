@@ -51,12 +51,10 @@ function LoginScreen({ navigation }: LoginScreenProps) {
           password: password,
         })
       });
-      console.log("Réponse reçue de l'API:", response);
       let json = await response.json();
-      console.log("JSON reçu:", json);
-      Alert.alert("Réponse du serveur:", json.message);
       if (json.status === 'success') {
-        navigation.navigate('HomeScreen', { userId: 1, userName: nom }); //envoyer vers la page HomeScreen.tsx
+        const { id } = json;  // Assurez-vous que la réponse contient le `id`
+        navigation.navigate('HomeScreen', { userId: id , userName: nom }); //envoyer vers la page HomeScreen.tsx
       } else {
         Alert.alert("Erreur", json.message || "Une erreur est survenue lors de la connexion.");
       }
@@ -94,15 +92,13 @@ function LoginScreen({ navigation }: LoginScreenProps) {
       let responseText = await response.text();  // Recevez la réponse sous forme de texte brut
       console.log("Réponse texte brute:", responseText); // Log pour le débogage
       let json = JSON.parse(responseText);  // Parsez le texte en JSON
-      console.log("JSON reçu:", json);  // Log pour le débogage
-      Alert.alert("Réponse du serveur:", json.message);
+  
       if (json.status === 'success') {
         setModalVisible(false);
       } else {
         Alert.alert("Erreur lors de l'inscription", json.message || "Une erreur est survenue.");
       }
     } catch (error) {
-      console.error(error);
       Alert.alert("Erreur réseau", "Impossible de se connecter au serveur.");
     }
   };

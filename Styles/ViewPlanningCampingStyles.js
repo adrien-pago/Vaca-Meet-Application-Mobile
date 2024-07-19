@@ -7,10 +7,12 @@ export default StyleSheet.create({
         resizeMode: 'cover',
       },
 
-    container: {
+      container: {
         flex: 1,
-        padding: 10,
-    },
+        backgroundColor: '#f0f4f8',
+        padding: 20,
+      },
+
     header: {
         fontSize: 22,
         fontWeight: 'bold',
@@ -18,20 +20,27 @@ export default StyleSheet.create({
         marginVertical: 15,
         color: '#333', 
     },
-    datePickerText: {
-        textAlign: 'center',
-        fontSize: 18,
-        color: '#ffffff', 
-        padding: 12,
-        backgroundColor: '#6A5ACD', 
-        borderRadius: 8,
-        marginVertical: 8,
-        elevation: 2,
+
+    card: {
+        backgroundColor: '#ffffff',
+        borderRadius: 10,
+        padding: 15,
+        marginVertical: 10,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 2 },
         shadowOpacity: 0.1,
-        shadowRadius: 2,
-    },
+        shadowRadius: 4,
+        elevation: 3,
+      },
+
+    datePickerText: {
+    color: '#3b82f6',
+    borderRadius: 10,
+    fontSize: 18,
+    marginVertical: 10,
+    textAlign: 'center',
+  },
+
     datesLabel: {
         textAlign: 'center',
         fontSize: 18,

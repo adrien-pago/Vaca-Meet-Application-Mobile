@@ -11,15 +11,18 @@ if ($conn->connect_error) {
 
 $dateDebut = $_GET['dateDebut'] ?? null;
 $dateFin = $_GET['dateFin'] ?? null;
-$idCamping = $_GET['idCamping'] ?? null; // Nouveau paramètre idCamping
+$idCamping = $_GET['idCamping'] ?? null;
 
 if (!$dateDebut || !$dateFin) {
     echo json_encode(['status' => 'error', 'message' => 'Dates manquantes']);
     exit();
 }
 
-$sql = "SELECT libelle_activity, date_debut, date_fin FROM PLANNING 
-WHERE idCamping = $idCamping  AND date_debut BETWEEN '$dateDebut 00:00:00' AND '$dateFin 23:59:59' ORDER BY date_fin";
+// Modifiez les noms des colonnes pour correspondre à ceux utilisés dans votre code React Native
+$sql = "SELECT libelle_activity AS LIB_ACTIVITE, date_debut AS DATE_HEURE_DEBUT, date_fin AS DATE_HEURE_FIN 
+        FROM PLANNING 
+        WHERE idCamping = $idCamping AND date_debut BETWEEN '$dateDebut 00:00:00' AND '$dateFin 23:59:59' 
+        ORDER BY date_debut";
 $result = $conn->query($sql);
 
 if (!$result) {
@@ -40,4 +43,4 @@ while($row = $result->fetch_assoc()) {
 $conn->close();
 
 echo json_encode(['status' => 'success', 'data' => $planning]);
-
+?>
